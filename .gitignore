@@ -1,0 +1,18 @@
+### Java, Scala, SBT
+*.class
+
+# Package files 
+*.jar
+
+# sbt specific 
+.cache
+.history
+.lib/
+dist/*
+target/
+lib_managed/
+src_managed/
+project/boot/
+
+# jetbrains
+.idea/workspace.xml
