@@ -1,0 +1,115 @@
+[debug] > Exec(;reload; set _root_.org.jetbrains.sbt.StructureKeys.sbtStructureOptions in Global := "download resolveClassifiers resolveSbtClassifiers" ;*/*:dumpStructureTo C:/Users/river/AppData/Local/Temp/sbt-structure.xml; session clear-all ; set ideaPort in Global := 50107, None, None)
+[debug] > Exec(reload, None, None)
+[debug] > Exec(sbtStashOnFailure, None, None)
+[debug] > Exec(onFailure loadFailed, None, None)
+[debug] > Exec(loadp, None, None)
+[info] welcome to sbt 1.4.2 (Eclipse OpenJ9 Java 1.8.0_265)
+[debug]       Load.loadUnit: plugins took 29.6373ms
+[debug]       Load.loadUnit: defsScala took 0.0036ms
+[debug] [Loading] Scanning directory C:\Users\river\.sbt\1.0\plugins
+[debug] [Loading] Found non-root projects 
+[debug] [Loading] Done in C:\Users\river\.sbt\1.0\plugins, returning: ()
+[debug] deducing auto plugins based on known facts Set(Atom(sbt.plugins.CorePlugin)) and clauses Clauses(List(Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.IvyPlugin))), Clause(Atom(sbt.ScriptedPlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.SbtPlugin),Set(Atom(sbt.ScriptedPlugin))), Clause(Atom(sbt.plugins.SemanticdbPlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.JUnitXmlReportPlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.MiniDependencyTreePlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.CorePlugin),Set(Atom(sbt.plugins.IvyPlugin))), Clause(Atom(sbt.plugins.IvyPlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.SemanticdbPlugin))), Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.JUnitXmlReportPlugin))), Clause(Atom(sbt.plugins.CorePlugin),Set(Atom(sbt.plugins.Giter8TemplatePlugin))), Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.MiniDependencyTreePlugin)))))
+[debug]   :: deduced result: Matched(sbt.plugins.CorePlugin,sbt.plugins.Giter8TemplatePlugin,sbt.plugins.IvyPlugin,sbt.plugins.JvmPlugin,sbt.plugins.MiniDependencyTreePlugin,sbt.plugins.JUnitXmlReportPlugin,sbt.plugins.SemanticdbPlugin)
+[debug] Plugins.deducer#function took 1.5281 ms
+[debug]           Load.resolveProject(global-plugins) took 1.1256ms
+[debug]         Load.loadTransitive: finalizeProject(Project(id global-plugins, base: C:\Users\river\.sbt\1.0\plugins, plugins: List(<none>))) took 3.1711ms
+[debug] [Loading] Done in C:\Users\river\.sbt\1.0\plugins, returning: (global-plugins)
+[debug]       Load.loadUnit: loadedProjectsRaw took 4.1849ms
+[debug]       Load.loadUnit: cleanEvalClasses took 0.0101ms
+[debug]     Load.loadUnit(file:/C:/Users/river/.sbt/1.0/plugins/, ...) took 34.8442ms
+[debug]   Load.apply: load took 36.3934ms
+[debug]   Load.apply: resolveProjects took 0.0956ms
+[debug]   Load.apply: finalTransforms took 14.8141ms
+[debug]   Load.apply: config.delegates took 0.3556ms
+[debug]   Load.apply: Def.make(settings)... took 82.7303ms
+[debug]   Load.apply: structureIndex took 27.0933ms
+[debug]   Load.apply: mkStreams took 0.0036ms
+[info] loading global plugins from C:\Users\river\.sbt\1.0\plugins
+[debug] Running task... Cancel: Signal, check cycles: false, forcegc: true
+[debug] Load.defaultLoad until apply took 402.1355ms
+[debug]           Load.loadUnit: plugins took 26.8297ms
+[debug]           Load.loadUnit: defsScala took 0.0055ms
+[debug] [Loading] Scanning directory C:\Users\river\IdeaProjects\Twitter-Emoji-Analysis\project
+[debug]             Load.loadUnit: mkEval took 0.2524ms
+[debug] [Loading] Found non-root projects 
+[debug] [Loading] Done in C:\Users\river\IdeaProjects\Twitter-Emoji-Analysis\project, returning: ()
+[debug] deducing auto plugins based on known facts Set(Atom(sbt.plugins.CorePlugin)) and clauses Clauses(List(Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.IvyPlugin))), Clause(Atom(sbt.ScriptedPlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.SbtPlugin),Set(Atom(sbt.ScriptedPlugin))), Clause(Atom(sbt.plugins.SemanticdbPlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.JUnitXmlReportPlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.MiniDependencyTreePlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.CorePlugin),Set(Atom(sbt.plugins.IvyPlugin))), Clause(Atom(sbt.plugins.IvyPlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.SemanticdbPlugin))), Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.JUnitXmlReportPlugin))), Clause(Atom(sbt.plugins.CorePlugin),Set(Atom(sbt.plugins.Giter8TemplatePlugin))), Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.MiniDependencyTreePlugin)))))
+[debug]   :: deduced result: Matched(sbt.plugins.CorePlugin,sbt.plugins.Giter8TemplatePlugin,sbt.plugins.IvyPlugin,sbt.plugins.JvmPlugin,sbt.plugins.MiniDependencyTreePlugin,sbt.plugins.JUnitXmlReportPlugin,sbt.plugins.SemanticdbPlugin)
+[debug] Plugins.deducer#function took 2.4131 ms
+[info] loading settings for project twitter-emoji-analysis-build from idea4.sbt ...
+[debug]               Load.resolveProject(twitter-emoji-analysis-build) took 5.6747ms
+[debug]             Load.loadTransitive: finalizeProject(Project(id twitter-emoji-analysis-build, base: C:\Users\river\IdeaProjects\Twitter-Emoji-Analysis\project, plugins: List(<none>))) took 8.6026ms
+[debug] [Loading] Done in C:\Users\river\IdeaProjects\Twitter-Emoji-Analysis\project, returning: (twitter-emoji-analysis-build)
+[debug]           Load.loadUnit: loadedProjectsRaw took 29.3644ms
+[debug]           Load.loadUnit: cleanEvalClasses took 1.4642ms
+[debug]         Load.loadUnit(file:/C:/Users/river/IdeaProjects/Twitter-Emoji-Analysis/project/, ...) took 58.6319ms
+[debug]       Load.apply: load took 60.2711ms
+[debug]       Load.apply: resolveProjects took 0.1641ms
+[debug]       Load.apply: finalTransforms took 8.4755ms
+[debug]       Load.apply: config.delegates took 0.3714ms
+[debug]       Load.apply: Def.make(settings)... took 64.3006ms
+[debug]       Load.apply: structureIndex took 20.8911ms
+[debug]       Load.apply: mkStreams took 0.0034ms
+[info] loading project definition from C:\Users\river\IdeaProjects\Twitter-Emoji-Analysis\project
+[debug] Running task... Cancel: Signal, check cycles: false, forcegc: true
+[debug]     Load.loadUnit: plugins took 445.2737ms
+[debug]     Load.loadUnit: defsScala took 0.0035ms
+[debug] [Loading] Scanning directory C:\Users\river\IdeaProjects\Twitter-Emoji-Analysis
+[debug]       Load.loadUnit: mkEval took 0.2385ms
+[debug] [Loading] Found non-root projects 
+[debug] [Loading] Done in C:\Users\river\IdeaProjects\Twitter-Emoji-Analysis, returning: ()
+[debug] deducing auto plugins based on known facts Set(Atom(sbt.plugins.CorePlugin)) and clauses Clauses(List(Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.IvyPlugin))), Clause(Atom(sbt.ScriptedPlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.SbtPlugin),Set(Atom(sbt.ScriptedPlugin))), Clause(Atom(sbt.plugins.SemanticdbPlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.JUnitXmlReportPlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.MiniDependencyTreePlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(org.jetbrains.sbt.StructurePlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(org.jetbrains.sbt.IdeaShellPlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(org.jetbrains.sbt.indices.SbtIntellijIndicesPlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.CorePlugin),Set(Atom(sbt.plugins.IvyPlugin))), Clause(Atom(sbt.plugins.IvyPlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.SemanticdbPlugin))), Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.JUnitXmlReportPlugin))), Clause(Atom(sbt.plugins.CorePlugin),Set(Atom(sbt.plugins.Giter8TemplatePlugin))), Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.MiniDependencyTreePlugin))), Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(org.jetbrains.sbt.StructurePlugin))), Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(org.jetbrains.sbt.IdeaShellPlugin))), Clause(And(Set(Atom(sbt.plugins.CorePlugin), Atom(sbt.plugins.JvmPlugin))),Set(Atom(org.jetbrains.sbt.indices.SbtIntellijIndicesPlugin)))))
+[debug]   :: deduced result: Matched(sbt.plugins.CorePlugin,sbt.plugins.Giter8TemplatePlugin,sbt.plugins.IvyPlugin,sbt.plugins.JvmPlugin,sbt.plugins.SemanticdbPlugin,org.jetbrains.sbt.indices.SbtIntellijIndicesPlugin,sbt.plugins.JUnitXmlReportPlugin,org.jetbrains.sbt.IdeaShellPlugin,org.jetbrains.sbt.StructurePlugin,sbt.plugins.MiniDependencyTreePlugin)
+[debug] Plugins.deducer#function took 2.1796 ms
+[info] loading settings for project twitter-emoji-analysis from build.sbt ...
+[debug]         Load.resolveProject(twitter-emoji-analysis) took 32.8339ms
+[debug]       Load.loadTransitive: finalizeProject(Project(id twitter-emoji-analysis, base: C:\Users\river\IdeaProjects\Twitter-Emoji-Analysis, plugins: List(<none>))) took 35.6479ms
+[debug] [Loading] Done in C:\Users\river\IdeaProjects\Twitter-Emoji-Analysis, returning: (twitter-emoji-analysis)
+[debug]     Load.loadUnit: loadedProjectsRaw took 87.615ms
+[debug]     Load.loadUnit: cleanEvalClasses took 6.3382ms
+[debug]   Load.loadUnit(file:/C:/Users/river/IdeaProjects/Twitter-Emoji-Analysis/, ...) took 539.8686ms
+[debug] Load.apply: load took 541.919ms
+[debug] Load.apply: resolveProjects took 0.1007ms
+[debug] Load.apply: finalTransforms took 16.5923ms
+[debug] Load.apply: config.delegates took 0.4728ms
+[debug] Load.apply: Def.make(settings)... took 96.2893ms
+[debug] Load.apply: structureIndex took 21.2352ms
+[debug] Load.apply: mkStreams took 0.0033ms
+[warn] Discarding 1 session setting.  Use 'session save' to persist session settings.
+[info] set current project to Twitter-Emoji-Analysis (in build file:/C:/Users/river/IdeaProjects/Twitter-Emoji-Analysis/)
+[debug] > Exec(sbtPopOnFailure, None, None)
+[debug] > Exec(resumeFromFailure, None, None)
+[debug] > Exec(set _root_.org.jetbrains.sbt.StructureKeys.sbtStructureOptions in Global := "download resolveClassifiers resolveSbtClassifiers", None, None)
+[info] Defining Global / sbtStructureOptions
+[info] The new value will be used by Global / ssOptions
+[debug] Defining 
+[debug] 	Global / sbtStructureOptions
+[debug] 
+[debug] The new value will be used by 
+[debug] 	Global / ssOptions
+[info] Reapplying settings...
+[info] set current project to Twitter-Emoji-Analysis (in build file:/C:/Users/river/IdeaProjects/Twitter-Emoji-Analysis/)
+[debug] > Exec(*/*:dumpStructureTo C:/Users/river/AppData/Local/Temp/sbt-structure.xml, None, None)
+[debug] Evaluating tasks: Global / dumpStructureTo
+[debug] Running task... Cancel: Signal, check cycles: false, forcegc: true
+[info] Writing structure to C:\Users\river\AppData\Local\Temp\sbt-structure.xml...
+[info] Done.
+[success] Total time: 2 s, completed Nov 11, 2020 4:27:50 PM
+[debug] > Exec(session clear-all, None, None)
+[info] Reapplying settings...
+[info] set current project to Twitter-Emoji-Analysis (in build file:/C:/Users/river/IdeaProjects/Twitter-Emoji-Analysis/)
+[debug] > Exec(set ideaPort in Global := 50107, None, None)
+[info] Defining Global / ideaPort
+[info] The new value will be used by Compile / compile, Test / compile
+[debug] Defining 
+[debug] 	Global / ideaPort
+[debug] 
+[debug] The new value will be used by 
+[debug] 	Compile / compile
+[debug] 	Test / compile
+[info] Reapplying settings...
+[info] set current project to Twitter-Emoji-Analysis (in build file:/C:/Users/river/IdeaProjects/Twitter-Emoji-Analysis/)
+[debug] > Exec(idea-shell, None, None)
+[debug] > Exec(, None, None)
+[debug] > Exec(idea-shell, None, None)
