@@ -52,6 +52,20 @@ class SparkEmoji(master: String) {
     demoQuery.show()
   }
 
+  def emojiValue(): Unit ={
+    import spark.implicits._
+
+    val emojiRegex = "(\u00a9|\u00ae|[\u2000-\u3300]|\uD83C[\uD000-\uDFFF]|\uD83D[\uD000-\uDFFF]|\uD83E[\uD000-\uDFFF])"
+    uploadJSON("twitter.json",true)
+
+    val dfEmojiSplit = dfRaw.select("id", "text")
+      .withColumn("text", functions.explode(functions.split($"text", " "))) //split by spaces and explode
+      .filter($"text" rlike "(^\u00a9|^\u00ae|^[\u2000-\u3300])") // filter out everything that is not an emoji
+
+    dfRaw.printSchema()
+
+    dfEmojiSplit.show()
+  }
 
 
 
