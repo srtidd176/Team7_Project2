@@ -23,14 +23,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c5697ef4-9031-4f1f-a12b-63604e8d37e5" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/sbt.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sbt.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/target/config-classes/$6c345e2f77bc725802d4$.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/target/config-classes/$6c345e2f77bc725802d4.cache" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/target/config-classes/$6c345e2f77bc725802d4.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/target/config-classes/$76208a59a8cb6607b23b$.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/target/config-classes/$76208a59a8cb6607b23b.cache" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/target/config-classes/$76208a59a8cb6607b23b.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/project/target/streams/_global/dependencyPositions/_global/streams/update_cache_2.12/output_dsp" beforeDir="false" afterPath="$PROJECT_DIR$/project/target/streams/_global/dependencyPositions/_global/streams/update_cache_2.12/output_dsp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/scala/spark_mapreduce/SparkEmoji.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/spark_mapreduce/SparkEmoji.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/scala-2.12/classes/spark_mapreduce/SparkEmoji.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/scala-2.12/classes/spark_mapreduce/SparkEmoji.class" afterDir="false" />
@@ -142,26 +135,26 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1605281297303" />
-    <state width="969" height="237" key="GridCell.Tab.0.bottom" timestamp="1605302053294">
+    <state width="1877" height="237" key="GridCell.Tab.0.bottom" timestamp="1605469558456">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="969" height="237" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1605302053294" />
-    <state width="969" height="237" key="GridCell.Tab.0.center" timestamp="1605302053294">
+    <state width="1877" height="237" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1605469558456" />
+    <state width="1877" height="237" key="GridCell.Tab.0.center" timestamp="1605469558455">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="969" height="237" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1605302053294" />
-    <state width="969" height="237" key="GridCell.Tab.0.left" timestamp="1605302053294">
+    <state width="1877" height="237" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1605469558455" />
+    <state width="1877" height="237" key="GridCell.Tab.0.left" timestamp="1605469558455">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="969" height="237" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1605302053294" />
-    <state width="969" height="237" key="GridCell.Tab.0.right" timestamp="1605302053294">
+    <state width="1877" height="237" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1605469558455" />
+    <state width="1877" height="237" key="GridCell.Tab.0.right" timestamp="1605469558455">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="969" height="237" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1605302053294" />
-    <state x="461" y="165" key="SettingsEditor" timestamp="1605293675434">
+    <state width="1877" height="237" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1605469558455" />
+    <state x="461" y="165" key="SettingsEditor" timestamp="1605303594923">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="461" y="165" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1605293675434" />
+    <state x="461" y="165" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1605303594923" />
     <state x="1075" y="207" key="new project wizard" timestamp="1605281286330">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

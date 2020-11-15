@@ -17,7 +17,7 @@ object Runner {
         sparkEmoji.demoQuery(lenMax.toInt)
       }
         // Catch any other cases
-      case _ => sparkEmoji.emojiValue()
+      case _ => sparkEmoji.emojiValue("twitter.json")
     }
 
   }

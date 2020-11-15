@@ -15,6 +15,8 @@ class SparkEmoji(master: String) {
 
   var dfRaw: sql.DataFrame = null
 
+  var emojiDF: sql.DataFrame = null
+
   val spark = SparkSession.builder()
     .appName("Twitter Emoji Analysis")
     .master(master)
@@ -53,17 +55,17 @@ class SparkEmoji(master: String) {
     demoQuery.show()
   }
 
-  def emojiValue(): Unit ={
+  def emojiValue(path: String): Unit ={
     import spark.implicits._
 
-    val emojiRegexSplit = "\u00a9|\u00ae|[\u2000-\u3300]|[\ud83c\ud000-\ud83c\udfff]|[\ud83d\ud000-\ud83d\udfff]|[\ud83e\ud000-\ud83e\udfff]"
-    val emojiRegexSingle = "^\u00a9$|^\u00ae$|^[\u2000-\u3300]$|^[\ud83c\ud000-\ud83c\udfff]$|^[\ud83d\ud000-\ud83d\udfff]$|^[\ud83e\ud000-\ud83e\udfff]$"
-    uploadJSON("twitter.json",true)
+    val emojiRegexLike = "\u00a9|\u00ae|[\u2000-\u3300]|[\ud83c\ud000-\ud83c\udfff]|[\ud83d\ud000-\ud83d\udfff]|[\ud83e\ud000-\ud83e\udfff]" //Identify "emoji-like" words
+    val emojiRegexSingle = "^\u00a9$|^\u00ae$|^[\u2000-\u3300]$|^[\ud83c\ud000-\ud83c\udfff]$|^[\ud83d\ud000-\ud83d\udfff]$|^[\ud83e\ud000-\ud83e\udfff]$" //Identify unique emojis
+    uploadJSON(path,true)
 
 
     val dfEmojiSplit = dfRaw.select("id", "text")
       .withColumn("text", functions.explode(functions.split($"text", "\\s"))) //split by spaces and explode
-      .filter($"text" rlike emojiRegexSplit) // filter out everything that is not emoji-like
+      .filter($"text" rlike emojiRegexLike) // filter out everything that is not emoji-like
 
     val condition = $"text" rlike emojiRegexSingle //filter out everything that is not a single emoji
     val dfEmojiSingle = dfEmojiSplit.filter(condition) //single emojis
@@ -72,18 +74,15 @@ class SparkEmoji(master: String) {
     dfEmojiGroups.show()
     dfEmojiSingle.show()
 
+    emojiDF = dfEmojiSingle
+    emojiDF.show()
+
     //TODO Break up the emoji groups
-    //dfEmojiGroups.foreach( row => row.get(1))
-
-    //dfEmojiGroups.withColumn("text", functions.explode(functions.split($"text", emojiRegexSplit)))
-      //.filter(condition) //collect single emojis
-      //.filter($"text" rlike "(?=[^?])") //ignore any unknown items
-      //.show()
-
-
-    //dfRaw.printSchema()
-
-    //dfEmojiSplit.show()
+    /*val emojiGroupsRDD = dfEmojiGroups//.withColumn("text", functions.explode(functions.split($"text", emojiRegexSplit)))
+      .filter(condition) //collect single emojis
+      .filter($"text" rlike "(?=[^?])") //ignore any unknown items
+      .show(50)
+    */
   }
 
 
