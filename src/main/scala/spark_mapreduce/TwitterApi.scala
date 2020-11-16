@@ -28,7 +28,7 @@ class TwitterApi (bearerToken: String)  {
    * @param linesPerFile :Int - number of lines data that are saved to File
    * */
 
-  def sampleStreamToDir(fieldQuery:String ="", dirname:String="twitterstream", linesPerFile:Int=1000) = {
+  def sampleStreamToDir(fieldQuery:String ="", dirname:String="twitterstream", linesPerFile:Int=1000, debug:Boolean) = {
     val httpClient = HttpClients.custom.setDefaultRequestConfig(RequestConfig.custom.setCookieSpec(CookieSpecs.STANDARD).build).build
     val uriBuilder = new URIBuilder(s"https://api.twitter.com/2/tweets/sample/stream?${fieldQuery}")
     val httpGet = new HttpGet(uriBuilder.build)
@@ -37,7 +37,7 @@ class TwitterApi (bearerToken: String)  {
     val entity = response.getEntity
     new File(Paths.get(s"${dirname}/").toUri ).mkdir()
     if (null != entity) {
-      fileIO(entity, dirname, linesPerFile)
+      fileIO(entity, dirname, linesPerFile, debug)
     }
   }
 
@@ -50,7 +50,7 @@ class TwitterApi (bearerToken: String)  {
      * *//*
      * This method calls the filtered stream endpoint and streams Tweets from it
      * */
-   def filterStream(fieldQuery: String="", dirname:String="twitterFilterStream", linesPerFile:Int=50): Unit = {
+   def filterStream(fieldQuery: String="", dirname:String="twitterFilterStream", linesPerFile:Int=50, debug:Boolean): Unit = {
     val httpClient = HttpClients.custom.setDefaultRequestConfig(RequestConfig.custom.setCookieSpec(CookieSpecs.STANDARD).build).build
     val uriBuilder = new URIBuilder(s"https://api.twitter.com/2/tweets/search/stream?${fieldQuery}")
     val httpGet = new HttpGet(uriBuilder.build)
@@ -59,7 +59,7 @@ class TwitterApi (bearerToken: String)  {
     val entity = response.getEntity
     new File(Paths.get(s"${dirname}/").toUri ).mkdir()
     if (null != entity) {
-      fileIO(entity, dirname, linesPerFile)
+      fileIO(entity, dirname, linesPerFile, debug)
     }
   }
 
@@ -97,7 +97,7 @@ class TwitterApi (bearerToken: String)  {
    * @param dirname - name of a directory where our responses will be stored
    * @param linesPerFile - lines each stored file should possess
    */
-  private def fileIO (entity: HttpEntity, dirname: String, linesPerFile: Int): Unit = {
+  private def fileIO (entity: HttpEntity, dirname: String, linesPerFile: Int, debug: Boolean): Unit = {
     val reader = new BufferedReader(new InputStreamReader(entity.getContent))
     var line = reader.readLine
     //initial filewriter, will be replaced with new filewriter every linesperfile
@@ -115,7 +115,7 @@ class TwitterApi (bearerToken: String)  {
         fileWriter = new PrintWriter(Paths.get("tweetstream.tmp").toFile)
       }
       fileWriter.println(line)
-      println(line)
+      if(debug){println(line)}
       line = reader.readLine()
       lineNumber += 1
     }
