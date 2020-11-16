@@ -12,7 +12,7 @@ object Runner {
     args match {
         //Returns a DataFrame containing the emojis separated from historic Twitter data
       case Array(func, path) if(func == "historic-emojis") =>  {
-        sparkEmoji.uploadJSON(path, true, false)
+        sparkEmoji.uploadJSON(path, false, false)
         sparkEmoji.emojiValue(sparkEmoji.dfRaw).show()
       }
         //Returns a DataFrame containing the emojis separated from Twitter Stream data
