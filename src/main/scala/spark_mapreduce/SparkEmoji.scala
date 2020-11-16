@@ -25,7 +25,6 @@ class SparkEmoji(master: String) {
   //Set log level to WARN
   spark.sparkContext.setLogLevel("WARN")
 
-
   /**
    * Uploads the JSON file as a DataFrame
    * @param path The path to the file
@@ -76,6 +75,11 @@ class SparkEmoji(master: String) {
 
     emojiDF = dfEmojiSingle
     emojiDF.show()
+
+    //TODO move elsewhere after testing
+    val func = new Functions()
+
+    func.tweetDF(4, spark, "TweetData.json")
 
     //TODO Break up the emoji groups
     /*val emojiGroupsRDD = dfEmojiGroups//.withColumn("text", functions.explode(functions.split($"text", emojiRegexSplit)))
