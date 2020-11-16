@@ -65,7 +65,7 @@ class TwitterApi (bearerToken: String)  {
 
 
   /**
-   *   Connect to the Twitter api on the recent search Route. Limited to a historical record of a 7-days,
+   *   Connect to the Twitter API on the recent search Route. Limited to a historical record of a 7-days,
    *   limited at 100 days
    * @param searchQuery - Required search query
    * @param queryFields - optional fields query
