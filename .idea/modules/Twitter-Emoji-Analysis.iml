@@ -35,13 +35,14 @@
     <orderEntry type="library" name="sbt: com.univocity:univocity-parsers:2.9.0:jar" level="project" />
     <orderEntry type="library" name="sbt: commons-beanutils:commons-beanutils:1.7.0:jar" level="project" />
     <orderEntry type="library" name="sbt: commons-cli:commons-cli:1.2:jar" level="project" />
-    <orderEntry type="library" name="sbt: commons-codec:commons-codec:1.10:jar" level="project" />
+    <orderEntry type="library" name="sbt: commons-codec:commons-codec:1.11:jar" level="project" />
     <orderEntry type="library" name="sbt: commons-collections:commons-collections:3.2.2:jar" level="project" />
     <orderEntry type="library" name="sbt: commons-configuration:commons-configuration:1.6:jar" level="project" />
     <orderEntry type="library" name="sbt: commons-digester:commons-digester:1.8:jar" level="project" />
     <orderEntry type="library" name="sbt: commons-httpclient:commons-httpclient:3.1:jar" level="project" />
-    <orderEntry type="library" name="sbt: commons-io:commons-io:2.4:jar" level="project" />
+    <orderEntry type="library" name="sbt: commons-io:commons-io:2.8.0:jar" level="project" />
     <orderEntry type="library" name="sbt: commons-lang:commons-lang:2.6:jar" level="project" />
+    <orderEntry type="library" name="sbt: commons-logging:commons-logging:1.2:jar" level="project" />
     <orderEntry type="library" name="sbt: commons-net:commons-net:3.1:jar" level="project" />
     <orderEntry type="library" name="sbt: io.airlift:aircompressor:0.10:jar" level="project" />
     <orderEntry type="library" name="sbt: io.dropwizard.metrics:metrics-core:4.1.1:jar" level="project" />
@@ -71,6 +72,7 @@
     <orderEntry type="library" name="sbt: org.apache.avro:avro-ipc:1.8.2:jar" level="project" />
     <orderEntry type="library" name="sbt: org.apache.avro:avro-mapred:1.8.2:hadoop2:jar" level="project" />
     <orderEntry type="library" name="sbt: org.apache.avro:avro:1.8.2:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.apache.bahir:spark-streaming-twitter_2.12:2.4.0:jar" level="project" />
     <orderEntry type="library" name="sbt: org.apache.commons:commons-compress:1.8.1:jar" level="project" />
     <orderEntry type="library" name="sbt: org.apache.commons:commons-crypto:1.0.0:jar" level="project" />
     <orderEntry type="library" name="sbt: org.apache.commons:commons-lang3:3.9:jar" level="project" />
@@ -100,8 +102,8 @@
     <orderEntry type="library" name="sbt: org.apache.hadoop:hadoop-yarn-server-nodemanager:2.7.4:jar" level="project" />
     <orderEntry type="library" name="sbt: org.apache.hive:hive-storage-api:2.7.1:jar" level="project" />
     <orderEntry type="library" name="sbt: org.apache.htrace:htrace-core:3.1.0-incubating:jar" level="project" />
-    <orderEntry type="library" name="sbt: org.apache.httpcomponents:httpclient:4.2.5:jar" level="project" />
-    <orderEntry type="library" name="sbt: org.apache.httpcomponents:httpcore:4.2.4:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.apache.httpcomponents:httpclient:4.5.12:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.apache.httpcomponents:httpcore:4.4.13:jar" level="project" />
     <orderEntry type="library" name="sbt: org.apache.ivy:ivy:2.4.0:jar" level="project" />
     <orderEntry type="library" name="sbt: org.apache.orc:orc-core:1.5.10:jar" level="project" />
     <orderEntry type="library" name="sbt: org.apache.orc:orc-mapreduce:1.5.10:jar" level="project" />
@@ -120,6 +122,7 @@
     <orderEntry type="library" name="sbt: org.apache.spark:spark-network-shuffle_2.12:3.0.1:jar" level="project" />
     <orderEntry type="library" name="sbt: org.apache.spark:spark-sketch_2.12:3.0.1:jar" level="project" />
     <orderEntry type="library" name="sbt: org.apache.spark:spark-sql_2.12:3.0.1:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.apache.spark:spark-streaming_2.12:3.0.1:jar" level="project" />
     <orderEntry type="library" name="sbt: org.apache.spark:spark-tags_2.12:3.0.1:jar" level="project" />
     <orderEntry type="library" name="sbt: org.apache.spark:spark-unsafe_2.12:3.0.1:jar" level="project" />
     <orderEntry type="library" name="sbt: org.apache.xbean:xbean-asm7-shaded:4.15:jar" level="project" />
@@ -168,6 +171,8 @@
     <orderEntry type="library" name="sbt: org.spark-project.spark:unused:1.0.0:jar" level="project" />
     <orderEntry type="library" name="sbt: org.threeten:threeten-extra:1.5.0:jar" level="project" />
     <orderEntry type="library" name="sbt: org.tukaani:xz:1.5:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.twitter4j:twitter4j-core:4.0.6:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.twitter4j:twitter4j-stream:4.0.6:jar" level="project" />
     <orderEntry type="library" name="sbt: org.xerial.snappy:snappy-java:1.1.7.5:jar" level="project" />
     <orderEntry type="library" name="sbt: oro:oro:2.0.8:jar" level="project" />
     <orderEntry type="module-library">
