@@ -42,14 +42,17 @@ class TwitterApi (bearerToken: String)  {
   }
 
 
-
-
-
-  /*
-     * This method calls the filtered stream endpoint and streams Tweets from it
-     * *//*
-     * This method calls the filtered stream endpoint and streams Tweets from it
-     * */
+  /**
+   * filterStream connects you to a filteredStream of Twitter Data; it is required that you have set up
+   * your rules previously with setupRules(Map[String,String])
+   *
+   * @param fieldQuery :String (default: "") The query request made to the twitter Api
+   *                         reference for returned fields https://developer.twitter
+   *                         .com/en/docs/twitter-api/tweets/filtered-stream/api-reference
+   * @param dirname : String (default: "twitterFilterStream") - Specifies  a name for the directory that will store
+   *                         incoming Tweet data.
+   * @param linesPerFile :Int - number of lines data that are saved to File
+   */
    def filterStream(fieldQuery: String="", dirname:String="twitterFilterStream", linesPerFile:Int=50): Unit = {
     val httpClient = HttpClients.custom.setDefaultRequestConfig(RequestConfig.custom.setCookieSpec(CookieSpecs.STANDARD).build).build
     val uriBuilder = new URIBuilder(s"https://api.twitter.com/2/tweets/search/stream?${fieldQuery}")
@@ -121,7 +124,12 @@ class TwitterApi (bearerToken: String)  {
     }
   }
 
-  /* Helper method to setup rules before streaming data */
+  /**
+   * Method to setup Rules to the Filter Stream route
+   * @param rules : scala.collection.mutable.Map[String, String] of rules.
+   *              (https://developer.twitter.com/en/docs/twitter-api/tweets/filtered-stream/integrate/build-a-rule)
+   *              example rules: Map("cats has:images" -> "cat images")
+   */
    def setupRules( rules: Map[String, String]): Unit = {
     val existingRules = getRules()
     if (existingRules.size > 0) deleteRules( existingRules)
