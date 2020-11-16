@@ -5,18 +5,19 @@
 *.jar
 
 # sbt specific
-.cache
+.cache/
 .history
 .lib/
 dist/*
-target
+target/
 lib_managed/
 src_managed/
 project/boot/
-project/target
+project/target/
 project/project/
-.idea
+.idea/
 bin/
+out
 
 # jetbrains
 .idea/workspace.xml
