@@ -97,7 +97,7 @@ class SparkEmoji(master: String) {
     val dfEmojiGroups = dfEmojiSplit.filter(not(condition)) //concatenated emojis
 
     dfEmojiSingle.writeStream
-      .outputMode("complete")
+      .outputMode("append")
       .format("console")
       .start()
       .awaitTermination(seconds*1000)

@@ -6,7 +6,7 @@ import scala.concurrent.Future
 object Runner {
 
   val sparkEmoji: SparkEmoji = new SparkEmoji("local[4]")
-  val twitterApi: TwitterApi = new TwitterApi(System.getenv("BEARER_TOKEN"))
+  val twitterApi: TwitterApi = new TwitterApi(System.getenv("TWITTER_BEARER_TOKEN"))
 
   def main(args: Array[String]): Unit = {
     args match {
@@ -18,7 +18,7 @@ object Runner {
         //Returns a DataFrame containing the emojis separated from Twitter Stream data
       case Array(func, path, seconds) if(func == "stream-emojis") => {
         Future {
-          twitterApi.sampleStreamToDir()
+          twitterApi.sampleStreamToDir(debug=false)
         }
         sparkEmoji.uploadJSON(path, true, true)
         sparkEmoji.emojiValueStream(sparkEmoji.dfStreamRaw, seconds.toInt)
