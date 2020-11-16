@@ -16,3 +16,7 @@ project/boot/
 
 # jetbrains
 .idea/workspace.xml
+
+twitterFilterStream/
+twitterstream/
+tweetstream.tmp
