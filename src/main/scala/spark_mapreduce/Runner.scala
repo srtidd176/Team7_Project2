@@ -1,24 +1,27 @@
 package spark_mapreduce
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+
 object Runner {
 
   val sparkEmoji: SparkEmoji = new SparkEmoji("local[4]")
-
+  val twitterApi: TwitterApi = new TwitterApi(System.getenv("BEARER_TOKEN"))
 
   def main(args: Array[String]): Unit = {
     args match {
         //Returns a DataFrame containing the emojis separated from historic Twitter data
       case Array(func, path) if(func == "historic-emojis") =>  {
         sparkEmoji.uploadJSON(path, true, false)
-        sparkEmoji.emojiValue(sparkEmoji.dfRaw)
+        sparkEmoji.emojiValue(sparkEmoji.dfRaw).show()
       }
         //Returns a DataFrame containing the emojis separated from Twitter Stream data
       case Array(func, path, seconds) if(func == "stream-emojis") => {
+        Future {
+          twitterApi.sampleStreamToDir()
+        }
         sparkEmoji.uploadJSON(path, true, true)
-        sparkEmoji.emojiValue(sparkEmoji.dfStreamRaw).writeStream.outputMode("complete")
-          .format("console")
-          .start()
-          .awaitTermination(seconds.toInt * 1000)
+        sparkEmoji.emojiValueStream(sparkEmoji.dfStreamRaw, seconds.toInt)
       }
       // Catch any other cases
       case _ => {
@@ -30,8 +33,8 @@ object Runner {
   }
   def printMenu(): Unit ={
     println("________________________________________________USAGE_____________________________________________________________")
-    println("historic-emojis <JSON path> | returns a DataFrame containing the emojis separated from historic Twitter data ")
-    println("stream-emojis <JSON path> <seconds> | returns a DataFrame containing the emojis separated from Twitter Stream data")
+    println("historic-emojis <JSON path> | emojis info separated from historic Twitter data ")
+    println("stream-emojis <JSON path> <seconds> | emojis info separated from Twitter Stream data")
   }
 
 }
