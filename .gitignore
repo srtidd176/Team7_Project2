@@ -1,22 +1,35 @@
 ### Java, Scala, SBT
 *.class
+*.log
+*.iml
+*.ipr
+*.iws
+.idea
+out
+.cache/
+.history/
+.lib/
+dist/*
 
 # Package files 
 *.jar
 
 # sbt specific 
-.cache
-.history
-.lib/
-dist/*
 target/
+bin/
+libexec/
 lib_managed/
 src_managed/
 project/boot/
+project/plugins/project/
+logs/
+project/*-shim.sbt
+project/project/
+project/target/
+target/
+.scala_dependencies
+.worksheet
+*.tsv
+tweetstream-*
 
-# jetbrains
-.idea/workspace.xml
 
-twitterFilterStream/
-twitterstream/
-tweetstream.tmp
