@@ -7,14 +7,14 @@ package spark_mapreduce
 
 import org.apache.spark.sql
 import org.apache.spark.sql.functions.{explode, not}
-import org.apache.spark.sql.{SparkSession, functions}
+import org.apache.spark.sql.{DataFrame, SparkSession, functions}
 
 
 class SparkEmoji(master: String) {
   // Initialize Spark
 
   var dfRaw: sql.DataFrame = null
-
+  var dfStreamRaw: sql.DataFrame = null
   var emojiDF: sql.DataFrame = null
 
   val spark = SparkSession.builder()
@@ -25,13 +25,19 @@ class SparkEmoji(master: String) {
   //Set log level to WARN
   spark.sparkContext.setLogLevel("WARN")
 
+
   /**
-   * Uploads the JSON file as a DataFrame
+   * Uploads the JSON file/directory as a DataFrame
    * @param path The path to the file
    * @param multiline boolean to indicate whether the JSON objects are multilined or not
    */
-  def uploadJSON(path: String, multiline: Boolean): Unit={
+  def uploadJSON(path: String, multiline: Boolean, stream: Boolean): Unit={
     dfRaw = spark.read.option("multiline", multiline).json(path)
+
+    if(stream){
+      dfStreamRaw =  spark.readStream.schema(dfRaw.schema).json(path)
+    }
+
   }
 
   /**
@@ -42,27 +48,20 @@ class SparkEmoji(master: String) {
     dfRaw.show()
   }
 
-  //TODO delete this example
   /**
-   * Shows the average age by eye color for people with first name of length < lenMax
-   * @param lenMax The max number for first name length
+   * Takes a input DataFrame with raw Twitter Tweet values and produces a DataFrame containing rows with singular emojis from that data
+   * @param inputDF the input DataFrame with raw values
+   * @return DataFrame with only the emojis separated by spaces
    */
-  def demoQuery(lenMax: Int): Unit ={
-    val demoQuery = dfRaw.filter(functions.length(dfRaw("name.first")) < lenMax)
-      .groupBy("eyeColor")
-      .agg(functions.avg("age"))
-    demoQuery.show()
-  }
 
-  def emojiValue(path: String): Unit ={
+    //TODO may make more sense to take in a DataFrame than a path
+  def emojiValue(inputDF: DataFrame): DataFrame ={
     import spark.implicits._
 
     val emojiRegexLike = "\u00a9|\u00ae|[\u2000-\u3300]|[\ud83c\ud000-\ud83c\udfff]|[\ud83d\ud000-\ud83d\udfff]|[\ud83e\ud000-\ud83e\udfff]" //Identify "emoji-like" words
     val emojiRegexSingle = "^\u00a9$|^\u00ae$|^[\u2000-\u3300]$|^[\ud83c\ud000-\ud83c\udfff]$|^[\ud83d\ud000-\ud83d\udfff]$|^[\ud83e\ud000-\ud83e\udfff]$" //Identify unique emojis
-    uploadJSON(path,true)
 
-
-    val dfEmojiSplit = dfRaw.select("id", "text")
+    val dfEmojiSplit = inputDF.select("id", "text")
       .withColumn("text", functions.explode(functions.split($"text", "\\s"))) //split by spaces and explode
       .filter($"text" rlike emojiRegexLike) // filter out everything that is not emoji-like
 
@@ -76,10 +75,7 @@ class SparkEmoji(master: String) {
     emojiDF = dfEmojiSingle
     emojiDF.show()
 
-    //TODO move elsewhere after testing
-    val func = new Functions()
-
-    func.tweetDF(4, spark, "TweetData.json")
+    dfEmojiSingle //return
 
     //TODO Break up the emoji groups
     /*val emojiGroupsRDD = dfEmojiGroups//.withColumn("text", functions.explode(functions.split($"text", emojiRegexSplit)))

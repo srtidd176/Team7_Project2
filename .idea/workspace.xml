@@ -22,7 +22,16 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c5697ef4-9031-4f1f-a12b-63604e8d37e5" name="Default Changelist" comment="" />
+    <list default="true" id="c5697ef4-9031-4f1f-a12b-63604e8d37e5" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/spark_mapreduce/Runner.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/spark_mapreduce/Runner.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/spark_mapreduce/SparkEmoji.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/spark_mapreduce/SparkEmoji.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/scala/spark_mapreduce/TwitterApi.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/spark_mapreduce/TwitterApi.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/scala-2.12/classes/spark_mapreduce/Runner$.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/scala-2.12/classes/spark_mapreduce/Runner$.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/scala-2.12/classes/spark_mapreduce/Runner.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/scala-2.12/classes/spark_mapreduce/Runner.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/scala-2.12/classes/spark_mapreduce/SparkEmoji.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/scala-2.12/classes/spark_mapreduce/SparkEmoji.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/scala-2.12/update/update_cache_2.12/output" beforeDir="false" afterPath="$PROJECT_DIR$/target/scala-2.12/update/update_cache_2.12/output" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -58,7 +67,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Hello-Spark-SQL" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Tidd_Project0" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
@@ -73,7 +82,7 @@
     <configuration name="Runner" type="Application" factoryName="Application" temporary="true">
       <option name="MAIN_CLASS_NAME" value="spark_mapreduce.Runner" />
       <module name="Twitter-Emoji-Analysis" />
-      <option name="PROGRAM_PARAMETERS" value="sdfa" />
+      <option name="PROGRAM_PARAMETERS" value="&quot;stream-emojis&quot; &quot;twitter&quot;" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="spark_mapreduce.*" />
@@ -126,26 +135,26 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="739" y="224" key="#com.intellij.ide.macro.MacrosDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1605131703593" />
-    <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1605281297303">
+    <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1605554143827">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1605281297303" />
-    <state width="1877" height="237" key="GridCell.Tab.0.bottom" timestamp="1605469558456">
+    <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1605554143827" />
+    <state width="1877" height="237" key="GridCell.Tab.0.bottom" timestamp="1605554344269">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="237" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1605469558456" />
-    <state width="1877" height="237" key="GridCell.Tab.0.center" timestamp="1605469558455">
+    <state width="1877" height="237" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1605554344269" />
+    <state width="1877" height="237" key="GridCell.Tab.0.center" timestamp="1605554344269">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="237" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1605469558455" />
-    <state width="1877" height="237" key="GridCell.Tab.0.left" timestamp="1605469558455">
+    <state width="1877" height="237" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1605554344269" />
+    <state width="1877" height="237" key="GridCell.Tab.0.left" timestamp="1605554344268">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="237" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1605469558455" />
-    <state width="1877" height="237" key="GridCell.Tab.0.right" timestamp="1605469558455">
+    <state width="1877" height="237" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1605554344268" />
+    <state width="1877" height="237" key="GridCell.Tab.0.right" timestamp="1605554344269">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="237" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1605469558455" />
+    <state width="1877" height="237" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1605554344269" />
     <state x="461" y="165" key="SettingsEditor" timestamp="1605303594923">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
