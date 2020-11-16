@@ -9,10 +9,14 @@
 .history
 .lib/
 dist/*
-target/
+target
 lib_managed/
 src_managed/
 project/boot/
+project/target
+project/project/
+.idea
+bin/
 
 # jetbrains
 .idea/workspace.xml
