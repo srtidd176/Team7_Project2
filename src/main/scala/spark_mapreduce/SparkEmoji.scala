@@ -6,7 +6,7 @@ Each analytical question receives it's own method.
 package spark_mapreduce
 
 import org.apache.spark.sql
-import org.apache.spark.sql.functions.{explode, not}
+import org.apache.spark.sql.functions.{desc, explode, not}
 import org.apache.spark.sql.{DataFrame, SparkSession, functions}
 
 
@@ -84,7 +84,7 @@ class SparkEmoji(master: String) {
     val emojiRegexLike = "\u00a9|\u00ae|[\u2000-\u3300]|[\ud83c\ud000-\ud83c\udfff]|[\ud83d\ud000-\ud83d\udfff]|[\ud83e\ud000-\ud83e\udfff]" //Identify "emoji-like" words
     val emojiRegexSingle = "^\u00a9$|^\u00ae$|^[\u2000-\u3300]$|^[\ud83c\ud000-\ud83c\udfff]$|^[\ud83d\ud000-\ud83d\udfff]$|^[\ud83e\ud000-\ud83e\udfff]$" //Identify unique emojis
 
-    val dfEmojiSplit = inputDF.select("text_id", "text")
+    val dfEmojiSplit = inputDF.select("tweet_id", "followers_count", "text")
       .withColumn("text", functions.explode(functions.split($"text", "\\s"))) //split by spaces and explode
       .filter($"text" rlike emojiRegexLike) // filter out everything that is not emoji-like
 
@@ -108,17 +108,7 @@ class SparkEmoji(master: String) {
   def emojiValueStream(inputDF: DataFrame, seconds: Int): Boolean ={
     import spark.implicits._
 
-    val emojiRegexLike = "\u00a9|\u00ae|[\u2000-\u3300]|[\ud83c\ud000-\ud83c\udfff]|[\ud83d\ud000-\ud83d\udfff]|[\ud83e\ud000-\ud83e\udfff]" //Identify "emoji-like" words
-    val emojiRegexSingle = "^\u00a9$|^\u00ae$|^[\u2000-\u3300]$|^[\ud83c\ud000-\ud83c\udfff]$|^[\ud83d\ud000-\ud83d\udfff]$|^[\ud83e\ud000-\ud83e\udfff]$" //Identify unique emojis
-
-    val dfEmojiSplit = inputDF.select("data.id", "data.text")
-      .withColumn("text", functions.explode(functions.split($"text", "\\s"))) //split by spaces and explode
-      .filter($"text" rlike emojiRegexLike) // filter out everything that is not emoji-like
-
-    val condition = $"text" rlike emojiRegexSingle //filter out everything that is not a single emoji
-    val dfEmojiSingle = dfEmojiSplit.filter(condition) //single emojis
-    val dfEmojiGroups = dfEmojiSplit.filter(not(condition)) //concatenated emojis
-
+    val dfEmojiSingle = emojiValue(inputDF)
     dfEmojiSingle.writeStream
       .outputMode("append")
       .format("console")
@@ -131,6 +121,21 @@ class SparkEmoji(master: String) {
       .filter($"text" rlike "(?=[^?])") //ignore any unknown items
       .show(50)
     */
+  }
+
+  def popPeepsEmojisStream(df:DataFrame, threshold: Int, seconds: Int): Boolean ={
+    import spark.implicits._
+    val popEmojisDF = df.select($"followers_count",$"text")
+      .filter( $"followers_count" > threshold)
+      .groupBy("text")
+      .count()
+      .withColumnRenamed("count", "total")
+      .orderBy(desc("total"))
+    popEmojisDF.writeStream
+      .outputMode("append")
+      .format("console")
+      .start()
+      .awaitTermination(seconds*1000)
   }
 
 

@@ -23,6 +23,13 @@ object Runner {
         sparkEmoji.uploadJSON(path, true, true)
         sparkEmoji.emojiValueStream(sparkEmoji.dfStreamRaw, seconds.toInt)
       }
+
+
+        //Question 5
+      case Array(func, path, threshold, seconds) if(func == "popular-people-emojis") =>{
+        sparkEmoji.uploadJSON(path, false, false)
+        sparkEmoji.popPeepsEmojisStream(sparkEmoji.emojiValue(sparkEmoji.dfStreamRaw), threshold.toInt, seconds.toInt)
+      }
       // Catch any other cases
       case _ => {
         printMenu()
@@ -35,6 +42,7 @@ object Runner {
     println("________________________________________________USAGE_____________________________________________________________")
     println("historic-emojis <JSON path> | emojis info separated from historic Twitter data ")
     println("stream-emojis <JSON path> <seconds> | emojis info separated from Twitter Stream data")
+    println("popular-people-emojis <JSON path> <followers minimum> <seconds> | most popular emojis among famous people")
   }
 
 }
