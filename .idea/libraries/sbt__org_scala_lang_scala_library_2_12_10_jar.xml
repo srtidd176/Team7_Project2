@@ -11,7 +11,6 @@
       </compiler-classpath>
     </properties>
     <CLASSES>
-      <root url="jar://$USER_HOME$/.sbt/boot/scala-2.12.10/lib/scala-library.jar!/" />
       <root url="jar://$USER_HOME$/AppData/Local/Coursier/cache/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-library/2.12.10/scala-library-2.12.10.jar!/" />
     </CLASSES>
     <JAVADOC>

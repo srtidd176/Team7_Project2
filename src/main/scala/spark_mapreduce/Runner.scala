@@ -10,25 +10,28 @@ object Runner {
 
   def main(args: Array[String]): Unit = {
     args match {
-        //Returns a DataFrame containing the emojis separated from historic Twitter data
+        //TODO delete : Returns a DataFrame containing the emojis separated from historic Twitter data
       case Array(func, path) if(func == "historic-emojis") =>  {
         sparkEmoji.uploadJSON(path, false, false)
         sparkEmoji.emojiValue(sparkEmoji.dfRaw).show()
       }
-        //Returns a DataFrame containing the emojis separated from Twitter Stream data
+        //TODO delete : Returns a DataFrame containing the emojis separated from Twitter Stream data
       case Array(func, path, seconds) if(func == "stream-emojis") => {
         Future {
           twitterApi.sampleStreamToDir("tweet.fields=public_metrics,created_at,lang&user.fields=public_metrics&expansions=author_id",debug=false)
         }
         sparkEmoji.uploadJSON(path, true, true)
-        sparkEmoji.emojiValueStream(sparkEmoji.dfStreamRaw, seconds.toInt)
+//        sparkEmoji.emojiValueStream(sparkEmoji.dfStreamRaw, secon)
       }
 
 
         //Question 5
       case Array(func, path, threshold, seconds) if(func == "popular-people-emojis") =>{
-        sparkEmoji.uploadJSON(path, false, false)
-        sparkEmoji.popPeepsEmojisStream(sparkEmoji.emojiValue(sparkEmoji.dfStreamRaw), threshold.toInt, seconds.toInt)
+        Future {
+          twitterApi.sampleStreamToDir("tweet.fields=public_metrics,created_at,lang&user.fields=public_metrics&expansions=author_id",debug=false)
+        }
+        sparkEmoji.uploadJSON(path, false, true)
+        sparkEmoji.popPeepsEmojisStream(sparkEmoji.emojiValueStream(sparkEmoji.dfStreamRaw), threshold.toInt, seconds.toInt)
       }
       // Catch any other cases
       case _ => {
