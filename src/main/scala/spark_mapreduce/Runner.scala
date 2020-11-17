@@ -18,7 +18,7 @@ object Runner {
         //Returns a DataFrame containing the emojis separated from Twitter Stream data
       case Array(func, path, seconds) if(func == "stream-emojis") => {
         Future {
-          twitterApi.sampleStreamToDir(debug=false)
+          twitterApi.sampleStreamToDir("tweet.fields=public_metrics,created_at,lang&user.fields=public_metrics&expansions=author_id",debug=false)
         }
         sparkEmoji.uploadJSON(path, true, true)
         sparkEmoji.emojiValueStream(sparkEmoji.dfStreamRaw, seconds.toInt)

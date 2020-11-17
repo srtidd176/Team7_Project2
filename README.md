@@ -2,11 +2,12 @@
 Revature Team 7 Project 2 
 
 ## Twitter Emoji Analysis
-1. How does the most popular emoji change over a week in the US?
-2. How does the most popular emoji change throughout the hours in a day in the US?
-3. What emojis are more popular in Japan than the US? What about Brazil and the US?
-4. Which emojis leads to the most likes and retweets?
-5. Which emojis are used more by popular people? (people with most followers)
+1. How does the most popular emoji change over a week(en language)? H
+2. How does the most popular emoji change throughout the hours in a day(en language)? H
+3. What emojis are more popular in Spanish than in English? What about Japanese with respect to English? S
+4. Which emojis leads to the most likes and retweets? H
+5. Which emojis are used more by popular people? (people with most followers) S
+6. Which skin tone variant is more popular for the "pray hands" emoji? S
 
 ## TODO
 1. Find a workflow to pull in Twitter Data into Spark Application.
