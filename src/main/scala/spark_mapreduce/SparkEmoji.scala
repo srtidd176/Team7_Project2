@@ -6,7 +6,7 @@ Each analytical question receives it's own method.
 package spark_mapreduce
 
 import org.apache.spark.sql
-import org.apache.spark.sql.functions.{explode, not}
+import org.apache.spark.sql.functions.{desc, explode, not}
 import org.apache.spark.sql.{DataFrame, SparkSession, functions}
 
 
@@ -72,7 +72,8 @@ class SparkEmoji(master: String) {
   }
 
   /**
-   * Takes a input DataFrame with raw Twitter Tweet values and produces a DataFrame containing rows with singular emojis from that data
+   * Takes a input DataFrame with raw Twitter Tweet values from a GetManyTweets request result and
+   * produces a DataFrame containing rows with singular emojis from that data
    * @param inputDF the input DataFrame with raw values
    * @return DataFrame with only the emojis separated by spaces
    */
@@ -84,7 +85,7 @@ class SparkEmoji(master: String) {
     val emojiRegexLike = "\u00a9|\u00ae|[\u2000-\u3300]|[\ud83c\ud000-\ud83c\udfff]|[\ud83d\ud000-\ud83d\udfff]|[\ud83e\ud000-\ud83e\udfff]" //Identify "emoji-like" words
     val emojiRegexSingle = "^\u00a9$|^\u00ae$|^[\u2000-\u3300]$|^[\ud83c\ud000-\ud83c\udfff]$|^[\ud83d\ud000-\ud83d\udfff]$|^[\ud83e\ud000-\ud83e\udfff]$" //Identify unique emojis
 
-    val dfEmojiSplit = inputDF.select("text_id", "text")
+    val dfEmojiSplit = inputDF.select("tweet_id", "followers_count", "text")
       .withColumn("text", functions.explode(functions.split($"text", "\\s"))) //split by spaces and explode
       .filter($"text" rlike emojiRegexLike) // filter out everything that is not emoji-like
 
@@ -105,13 +106,19 @@ class SparkEmoji(master: String) {
     */
   }
 
-  def emojiValueStream(inputDF: DataFrame, seconds: Int): Boolean ={
+  /**
+   * Takes a input DataFrame with raw Twitter Tweet values from a stream and produces a DataFrame
+   * containing rows with singular emojis from that data
+   * @param inputDF the input stream data file
+   * @return a DataFrame with all required fields for emojis
+   */
+  def emojiValueStream(inputDF: DataFrame): DataFrame ={
     import spark.implicits._
-
     val emojiRegexLike = "\u00a9|\u00ae|[\u2000-\u3300]|[\ud83c\ud000-\ud83c\udfff]|[\ud83d\ud000-\ud83d\udfff]|[\ud83e\ud000-\ud83e\udfff]" //Identify "emoji-like" words
     val emojiRegexSingle = "^\u00a9$|^\u00ae$|^[\u2000-\u3300]$|^[\ud83c\ud000-\ud83c\udfff]$|^[\ud83d\ud000-\ud83d\udfff]$|^[\ud83e\ud000-\ud83e\udfff]$" //Identify unique emojis
 
-    val dfEmojiSplit = inputDF.select("data.id", "data.text")
+    //TODO Add all required columns in the select bellow
+    val dfEmojiSplit = inputDF.select("data.id", "includes.users.public_metrics.followers_count", "data.text")
       .withColumn("text", functions.explode(functions.split($"text", "\\s"))) //split by spaces and explode
       .filter($"text" rlike emojiRegexLike) // filter out everything that is not emoji-like
 
@@ -119,18 +126,35 @@ class SparkEmoji(master: String) {
     val dfEmojiSingle = dfEmojiSplit.filter(condition) //single emojis
     val dfEmojiGroups = dfEmojiSplit.filter(not(condition)) //concatenated emojis
 
-    dfEmojiSingle.writeStream
-      .outputMode("append")
-      .format("console")
-      .start()
-      .awaitTermination(seconds*1000)
-
+    dfEmojiSingle
     //TODO Break up the emoji groups
     /*val emojiGroupsRDD = dfEmojiGroups//.withColumn("text", functions.explode(functions.split($"text", emojiRegexSplit)))
       .filter(condition) //collect single emojis
       .filter($"text" rlike "(?=[^?])") //ignore any unknown items
       .show(50)
     */
+  }
+
+  /**
+   * Shows the top emojis used by famous people
+   * @param df the input raw data frame
+   * @param threshold the minimum number of followers required to be "famous"
+   * @param seconds the duration of the stream feed
+   * @return a boolean for true if it completes correctly
+   */
+  def popPeepsEmojisStream(df:DataFrame, threshold: Int, seconds: Int): Boolean ={
+    import spark.implicits._
+    val popEmojisDF = df.select("followers_count","text")
+      .filter( $"followers_count"(0) > threshold)
+      .groupBy("text")
+      .count()
+      .withColumnRenamed("count", "total")
+      .orderBy(desc("total"))
+    popEmojisDF.writeStream
+      .outputMode("complete")
+      .format("console")
+      .start()
+      .awaitTermination(seconds*1000)
   }
 
 
