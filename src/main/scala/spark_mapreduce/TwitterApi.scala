@@ -54,7 +54,7 @@ class TwitterApi (bearerToken: String)  {
    *                         incoming Tweet data.
    * @param linesPerFile :Int - number of lines data that are saved to File
    */
-   def filterStream(fieldQuery: String="", dirname:String="twitterFilterStream", linesPerFile:Int=50): Unit = {
+   def filterStream(fieldQuery: String="", dirname:String="twitterFilterStream", linesPerFile:Int=50, debug: Boolean = true): Unit = {
     val httpClient = HttpClients.custom.setDefaultRequestConfig(RequestConfig.custom.setCookieSpec(CookieSpecs.STANDARD).build).build
     val uriBuilder = new URIBuilder(s"https://api.twitter.com/2/tweets/search/stream?${fieldQuery}")
     val httpGet = new HttpGet(uriBuilder.build)
@@ -138,10 +138,6 @@ class TwitterApi (bearerToken: String)  {
     }
   }
 
-<<<<<<< HEAD
-  /* Helper method to setup rules before streaming data */
-  def setupRules( rules: Map[String, String]): Unit = {
-=======
   /**
    * Method to setup Rules to the Filter Stream route
    * @param rules : scala.collection.mutable.Map[String, String] of rules.
@@ -149,7 +145,7 @@ class TwitterApi (bearerToken: String)  {
    *              example rules: Map("cats has:images" -> "cat images")
    */
    def setupRules( rules: Map[String, String]): Unit = {
->>>>>>> 1f849c4058534d495f8738c3770b4d829ced7751
+
     val existingRules = getRules()
     if (existingRules.size > 0) deleteRules( existingRules)
     createRules(rules)
