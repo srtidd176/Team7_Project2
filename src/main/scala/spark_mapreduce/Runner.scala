@@ -24,6 +24,12 @@ object Runner {
 //        sparkEmoji.emojiValueStream(sparkEmoji.dfStreamRaw, secon)
       }
 
+        // Question 1
+      case Array(func, path) if (func == "weeks-most-popular") => {
+        sparkEmoji.uploadJSON(path, false, false)
+        sparkEmoji.dfRawShow()
+      }
+
 
         //Question 5
       case Array(func, path, threshold, seconds) if(func == "popular-people-emojis") =>{

@@ -39,10 +39,10 @@ class SparkEmoji(master: String) {
         //getting the tweet DF
         val splitDfTweet = df.select("data").withColumn("data", functions.explode($"data"))
         val dfTweet = splitDfTweet.select("data.*")
-        val dfTweetFlatten = dfTweet.toDF("author_id", "time", "id", "lang", "public_metrics", "text")
+        val dfTweetFlatten = dfTweet.toDF("author_id", "time", "id", "lang", "public_metrics", "text", "withheld")
         val dfTweetFull = dfTweetFlatten.select("id", "author_id", "time", "lang", "public_metrics.*", "text")
         val dfTweetFullFlatten = dfTweetFull.toDF("tweet_id", "author_id", "time", "lang", "like_count", "quote_count", "reply_count", "retweet_count", "text")
-        //dfTweetFullFlatten.show()
+//        dfTweetFullFlatten.show()
 
         //getting the author DF
         val splitDfAuth = df.select("includes.*")
@@ -51,7 +51,7 @@ class SparkEmoji(master: String) {
         val dfAuthFlatten = dfAuth.toDF("id", "name", "username", "public_metrics")
         val dfAuthFull = dfAuthFlatten.select("id", "name", "username", "public_metrics.followers_count", "public_metrics.following_count", "public_metrics.tweet_count", "public_metrics.listed_count")
         val dfAuthFullFlatten = dfAuthFull.toDF("user_id", "name", "username", "followers_count", "following_count", "tweet_count", "listed_count")
-        //dfAuthFullFlatten.show()
+//        dfAuthFullFlatten.show()
 
         //inner joins the two df
         dfRaw = dfTweetFullFlatten.join(dfAuthFullFlatten, dfTweetFullFlatten("author_id") === dfAuthFullFlatten("user_id"))
