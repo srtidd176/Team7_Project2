@@ -51,6 +51,7 @@ object Runner {
     println("________________________________________________USAGE_____________________________________________________________")
     println("historic-emojis <JSON path> | emojis info separated from historic Twitter data ")
     println("stream-emojis <JSON path> <seconds> | emojis info separated from Twitter Stream data")
+    println("weeklyHistorical | pull down historical record sample of Recent Tweets")
     println("popular-people-emojis <JSON path> <followers minimum> <seconds> | most popular emojis among famous people")
   }
 
