@@ -33,6 +33,12 @@ object Runner {
         sparkEmoji.uploadJSON(path, false, true)
         sparkEmoji.popPeepsEmojisStream(sparkEmoji.emojiValueStream(sparkEmoji.dfStreamRaw), threshold.toInt, seconds.toInt)
       }
+
+        // Currently Helper to pull Recent Tweets by Time interval for Historical Records
+      case Array(func, path) if (func== "weeklyHistorical") => {
+        twitterApi.recentSearchTimeInt(30, true)
+
+      }
       // Catch any other cases
       case _ => {
         printMenu()
