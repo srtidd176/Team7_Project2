@@ -29,6 +29,12 @@ object Runner {
       }
 
 
+      // Currently Helper to pull Recent Tweets by Time interval for Historical Records
+      case Array(func, path) if (func== "weeklyHistorical") => {
+        twitterApi.recentSearchTimeInt(30, true)
+
+      }
+
         //Question 5
       case Array(func, path, threshold, seconds) if(func == "popular-people-emojis") =>{
         Future {
@@ -59,6 +65,7 @@ object Runner {
     println("________________________________________________USAGE_____________________________________________________________")
     println("historic-emojis <JSON path> | emojis info separated from historic Twitter data ")
     println("stream-emojis <JSON path> <seconds> | emojis info separated from Twitter Stream data")
+    println("weeklyHistorical | pull down historical record sample of Recent Tweets")
     println("popular-people-emojis <JSON path> <followers minimum> <seconds> | most popular emojis among famous people")
     println("popular-emoji-variant <JSON path> <base emoji encoding> <seconds> | most popular emojis variation of given base emoji")
   }
