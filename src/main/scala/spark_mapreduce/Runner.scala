@@ -21,9 +21,20 @@ object Runner {
           twitterApi.sampleStreamToDir("tweet.fields=public_metrics,created_at,lang&user.fields=public_metrics&expansions=author_id",debug=false)
         }
         sparkEmoji.uploadJSON(path, true, true)
-//        sparkEmoji.emojiValueStream(sparkEmoji.dfStreamRaw, secon)
+        sparkEmoji.emojiValueStream(sparkEmoji.dfStreamRaw)
       }
 
+      //Question 3
+      case Array(func, path, lang1, lang2) if(func == "language-top-emojis") =>{
+        sparkEmoji.uploadJSON(path, false, false)
+        sparkEmoji.langTopEmojisHist(sparkEmoji.dfRaw, lang1, lang2)
+      }
+
+      //Question 4
+      case Array(func, path, like) if(func == "popular-tweet-emojis") =>{
+        sparkEmoji.uploadJSON(path, false, false)
+        sparkEmoji.popTweetsEmojiHist(sparkEmoji.dfRaw, like.toLowerCase.toBoolean)
+      }
 
         //Question 5
       case Array(func, path, threshold, seconds) if(func == "popular-people-emojis") =>{
@@ -45,6 +56,8 @@ object Runner {
     println("________________________________________________USAGE_____________________________________________________________")
     println("historic-emojis <JSON path> | emojis info separated from historic Twitter data ")
     println("stream-emojis <JSON path> <seconds> | emojis info separated from Twitter Stream data")
+    println("language-top-emojis <JSON path> <first language> <second language> <seconds> | top emojis in first language with how many are used in second language")
+    println("popular-tweet-emojis <JSON path> <like boolean> | most liked or retweeted emojis")
     println("popular-people-emojis <JSON path> <followers minimum> <seconds> | most popular emojis among famous people")
   }
 

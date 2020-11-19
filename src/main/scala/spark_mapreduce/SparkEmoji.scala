@@ -85,9 +85,9 @@ class SparkEmoji(master: String) {
     val emojiRegexLike = "\u00a9|\u00ae|[\u2000-\u3300]|[\ud83c\ud000-\ud83c\udfff]|[\ud83d\ud000-\ud83d\udfff]|[\ud83e\ud000-\ud83e\udfff]" //Identify "emoji-like" words
     val emojiRegexSingle = "^\u00a9$|^\u00ae$|^[\u2000-\u3300]$|^[\ud83c\ud000-\ud83c\udfff]$|^[\ud83d\ud000-\ud83d\udfff]$|^[\ud83e\ud000-\ud83e\udfff]$" //Identify unique emojis
 
-    val dfEmojiSplit = inputDF.select("tweet_id", "followers_count", "text")
+    val dfEmojiSplit = inputDF.select("tweet_id", "followers_count", "text", "lang", "like_count", "retweet_count")
       .withColumn("text", functions.explode(functions.split($"text", "\\s"))) //split by spaces and explode
-      .filter($"text" rlike emojiRegexLike) // filter out everything that is not emoji-like
+      .filter($"text" rlike emojiRegexSingle) // filter out everything that is not emoji-like
 
     val condition = $"text" rlike emojiRegexSingle //filter out everything that is not a single emoji
     val dfEmojiSingle = dfEmojiSplit.filter(condition) //single emojis
@@ -96,7 +96,7 @@ class SparkEmoji(master: String) {
     //dfEmojiGroups.show()
     //dfEmojiSingle.show()
 
-    dfEmojiSingle //return
+    dfEmojiSplit //return
 
     //TODO Break up the emoji groups
     /*val emojiGroupsRDD = dfEmojiGroups//.withColumn("text", functions.explode(functions.split($"text", emojiRegexSplit)))
@@ -118,7 +118,7 @@ class SparkEmoji(master: String) {
     val emojiRegexSingle = "^\u00a9$|^\u00ae$|^[\u2000-\u3300]$|^[\ud83c\ud000-\ud83c\udfff]$|^[\ud83d\ud000-\ud83d\udfff]$|^[\ud83e\ud000-\ud83e\udfff]$" //Identify unique emojis
 
     //TODO Add all required columns in the select bellow
-    val dfEmojiSplit = inputDF.select("data.id", "includes.users.public_metrics.followers_count", "data.text")
+    val dfEmojiSplit = inputDF.select($"data.id", $"includes.users.public_metrics.followers_count", $"data.text", $"data.lang")
       .withColumn("text", functions.explode(functions.split($"text", "\\s"))) //split by spaces and explode
       .filter($"text" rlike emojiRegexLike) // filter out everything that is not emoji-like
 
@@ -133,6 +133,57 @@ class SparkEmoji(master: String) {
       .filter($"text" rlike "(?=[^?])") //ignore any unknown items
       .show(50)
     */
+  }
+
+  /**
+   * Compares the top emojis of two different languages
+   * @param df the input raw data frame
+   * @param language1 the first language you are searching for emojis, will be ordered by this languages top emojis
+   * @param language2 the second language you are searching for emojis
+   */
+  def langTopEmojisHist(df: DataFrame, language1: String, language2: String): Unit ={
+    import spark.implicits._
+    val langEmojiDF = emojiValue(df)
+    val lang1EmojisDF = langEmojiDF.select("lang","text")
+      .filter( $"lang" === language1)
+      .groupBy("text")
+      .count()
+      .withColumnRenamed("count", s"${language1} total")
+      .orderBy(desc(s"${language1} total"))
+    val lang2EmojisDF = langEmojiDF.select("lang","text")
+      .filter( $"lang" === language2)
+      .groupBy("text")
+      .count()
+      .withColumnRenamed("count", s"${language2} total")
+    val fullLangEmojisDF = lang1EmojisDF.join(lang2EmojisDF, lang1EmojisDF("text") === lang2EmojisDF("text"), "fullouter")
+      .orderBy(desc(s"${language1} total"))
+    fullLangEmojisDF.show()
+  }
+
+  /**
+   * Shows the top emojis used by most liked or retweeted tweets
+   * @param df the input raw data frame
+   * @param likes true for likes, false for retweets
+   */
+  def popTweetsEmojiHist(df: DataFrame, likes: Boolean): Unit = {
+    import spark.implicits._
+    val tweetEmojiDF = emojiValue(df)
+    if(likes == true) {
+      val likeEmojiDF = tweetEmojiDF.select("text", "like_count")
+        .groupBy("text")
+        .sum("like_count")
+        .withColumnRenamed("sum(like_count)", "total_likes")
+        .orderBy(desc("total_likes"))
+      likeEmojiDF.show()
+    }
+    else {
+      val likeEmojiDF = tweetEmojiDF.select("text", "retweet_count")
+        .groupBy("text")
+        .sum("retweet_count")
+        .withColumnRenamed("sum(retweet_count)", "total_retweets")
+        .orderBy(desc("total_retweets"))
+      likeEmojiDF.show()
+    }
   }
 
   /**
