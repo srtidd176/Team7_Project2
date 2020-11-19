@@ -9,6 +9,8 @@ import org.apache.spark.sql
 import org.apache.spark.sql.functions.{desc, explode, not}
 import org.apache.spark.sql.{DataFrame, SparkSession, functions}
 
+import scala.collection.mutable.ListBuffer
+
 
 class SparkEmoji(master: String) {
   // Initialize Spark
@@ -83,7 +85,8 @@ class SparkEmoji(master: String) {
     import spark.implicits._
 
     val emojiRegexLike = "\u00a9|\u00ae|[\u2000-\u3300]|[\ud83c\ud000-\ud83c\udfff]|[\ud83d\ud000-\ud83d\udfff]|[\ud83e\ud000-\ud83e\udfff]" //Identify "emoji-like" words
-    val emojiRegexSingle = "^\u00a9$|^\u00ae$|^[\u2000-\u3300]$|^[\ud83c\ud000-\ud83c\udfff]$|^[\ud83d\ud000-\ud83d\udfff]$|^[\ud83e\ud000-\ud83e\udfff]$" //Identify unique emojis
+      val emojiRegexSingle = "^\u00a9$|^\u00ae$|^[\u2000-\u3300]?[\uD83C\uDFFB-\uD83C\uDFFF]$|^[\ud83c\ud000-\ud83c\udfff]?[\uD83C\uDFFB-\uD83C\uDFFF]$|" +
+        "^[\ud83d\ud000-\ud83d\udfff]?[\uD83C\uDFFB-\uD83C\uDFFF]$|^[\ud83e\ud000-\ud83e\udfff]?[\uD83C\uDFFB-\uD83C\uDFFF]$" //Identify unique emojis
 
     val dfEmojiSplit = inputDF.select("tweet_id", "followers_count", "text")
       .withColumn("text", functions.explode(functions.split($"text", "\\s"))) //split by spaces and explode
@@ -115,7 +118,8 @@ class SparkEmoji(master: String) {
   def emojiValueStream(inputDF: DataFrame): DataFrame ={
     import spark.implicits._
     val emojiRegexLike = "\u00a9|\u00ae|[\u2000-\u3300]|[\ud83c\ud000-\ud83c\udfff]|[\ud83d\ud000-\ud83d\udfff]|[\ud83e\ud000-\ud83e\udfff]" //Identify "emoji-like" words
-    val emojiRegexSingle = "^\u00a9$|^\u00ae$|^[\u2000-\u3300]$|^[\ud83c\ud000-\ud83c\udfff]$|^[\ud83d\ud000-\ud83d\udfff]$|^[\ud83e\ud000-\ud83e\udfff]$" //Identify unique emojis
+    val emojiRegexSingle = "^\u00a9$|^\u00ae$|^[\u2000-\u3300]?[\uD83C\uDFFB-\uD83C\uDFFF]$|^[\ud83c\ud000-\ud83c\udfff]?[\uD83C\uDFFB-\uD83C\uDFFF]$|" +
+      "^[\ud83d\ud000-\ud83d\udfff]?[\uD83C\uDFFB-\uD83C\uDFFF]$|^[\ud83e\ud000-\ud83e\udfff]?[\uD83C\uDFFB-\uD83C\uDFFF]$" //Identify unique emojis
 
     //TODO Add all required columns in the select bellow
     val dfEmojiSplit = inputDF.select("data.id", "includes.users.public_metrics.followers_count", "data.text")
@@ -127,12 +131,14 @@ class SparkEmoji(master: String) {
     val dfEmojiGroups = dfEmojiSplit.filter(not(condition)) //concatenated emojis
 
     dfEmojiSingle
+    //dfEmojiSingle
+    //dfEmojiGroups
     //TODO Break up the emoji groups
-    /*val emojiGroupsRDD = dfEmojiGroups//.withColumn("text", functions.explode(functions.split($"text", emojiRegexSplit)))
-      .filter(condition) //collect single emojis
-      .filter($"text" rlike "(?=[^?])") //ignore any unknown items
-      .show(50)
-    */
+   // val emojiGroupsSplit = dfEmojiGroups
+    //  .withColumn("text", functions.explode(functions.split($"text", "")))
+      //.filter($"text" rlike "\\W")
+    //.filter(condition) //collect single emojis
+     //emojiGroupsSplit
   }
 
   /**
@@ -157,6 +163,85 @@ class SparkEmoji(master: String) {
       .awaitTermination(seconds*1000)
   }
 
+
+  def topEmojiVariationStream(df: DataFrame, baseEmoji: String, seconds: Int): Boolean ={
+    /*
+    light skin: \uD83C\uDFFB
+    medium-light skin: \uD83C\uDFFC
+    medium skin: \uD83C\uDFFD
+    medium-dark skin: \uD83C\uDFFE
+    dark skin: \uD83C\uDFFF
+    */
+    import spark.implicits._
+    val emojiVariation = df.select("text")
+      .filter($"text" rlike baseEmoji)
+      .groupBy("text")
+      .count()
+      .withColumnRenamed("count", "total")
+      .orderBy(desc("total"))
+    emojiVariation.writeStream
+      .outputMode("complete")
+      .format("console")
+      .start()
+      .awaitTermination(seconds*1000)
+  }
+
+  def breakUpEmojis(emoji: String): ListBuffer[String] = {
+    val emojiRegexStage1 = "(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c|\uD83D|\ud83e)".r // first base emoji char
+    val emojiRegexStage2 = "([\ud83c\ud000-\ud83c\udfff]|[\ud83d\ud000-\ud83d\udfff]|[\ud83e\ud000-\ud83e\udfff])".r //second base emoji char
+    val emojiRegexStage3 = "([\ud83d\uDC4B-\ud83d\udf82]\uD83C|[\ud83e\uD000-\ud83e\uDFFF]\uD83C)".r // skin tone identifier char
+    val emojiRegexStage4 = "([\ud83d\uDC4B-\ud83d\udf82][\uD83C\uDFFB-\uD83C\uDFFF]|[\ud83e\uD000-\ud83e\uDFFF][\uD83C\uDFFB-\uD83C\uDFFF])".r // specific color identifier char
+    val letterRegex = "(\\w|\\s|[.,’'\\/#!$@%\\^&\\*;:{}=\\-_`~()])".r
+    var oldPosEmoji = ""
+    var newPosEmoji = ""
+    var baseEmojiBackup = ""
+    val outputList: ListBuffer[String] = ListBuffer()
+
+    (emoji + "|") // adds this symbol to indicate to print the last emoji in the string
+      .split("").foreach(f => {
+      newPosEmoji = oldPosEmoji + f
+      f match {
+        case letterRegex(c) => // Do nothing with letters
+        case _ => {
+          newPosEmoji match {
+            case emojiRegexStage1(c) => { // first base emoji char
+              oldPosEmoji = newPosEmoji
+            }
+            case emojiRegexStage2(c) => { // second base emoji char
+              oldPosEmoji = newPosEmoji
+            }
+            case emojiRegexStage3(c) => { // skin tone identifier char
+              baseEmojiBackup = oldPosEmoji // make a backup of the previous emoji to handle use cases of a base emoji followed by an emoji starting with \uD83C
+              oldPosEmoji = newPosEmoji
+            }
+            case emojiRegexStage4(c) => { // specific color identifier char
+              oldPosEmoji = newPosEmoji
+              //println(oldPosEmoji)
+              outputList += oldPosEmoji
+              oldPosEmoji = ""
+              baseEmojiBackup = ""
+            }
+            case _ => {
+              baseEmojiBackup match{
+                case emojiRegexStage2(c) if(c != "") => { // determine if the backup of the base emoji  is needed
+                  //println(c)
+                  outputList += c
+                  baseEmojiBackup = ""
+                  oldPosEmoji = "\uD83C"+f
+                }
+                case _ => {
+                  //println(oldPosEmoji) // if it is no longer an emoji then just refresh oldPosEmoji
+                  outputList += oldPosEmoji
+                  oldPosEmoji = f
+                }
+              }
+            }
+          }
+        }
+      }
+    })
+    outputList
+  }
 
 
 
