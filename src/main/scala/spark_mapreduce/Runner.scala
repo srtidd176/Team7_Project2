@@ -21,11 +21,7 @@ object Runner {
         //  twitterApi.sampleStreamToDir("tweet.fields=public_metrics,created_at,lang&user.fields=public_metrics&expansions=author_id",debug=false)
        // }
         sparkEmoji.uploadJSON(path, multiline=true, stream=true)
-        sparkEmoji.emojiValueStream(sparkEmoji.dfStreamRaw).select("id", "text").writeStream
-          .outputMode("append")
-          .format("console")
-          .start()
-          .awaitTermination(seconds.toInt*1000)
+        sparkEmoji.emojiValueStream(sparkEmoji.dfStreamRaw)
       }
 
 
@@ -41,7 +37,7 @@ object Runner {
           twitterApi.sampleStreamToDir("tweet.fields=public_metrics,created_at,lang&user.fields=public_metrics&expansions=author_id",debug=false)
         }
         sparkEmoji.uploadJSON(path, multiline = false, stream = true)
-        sparkEmoji.popPeepsEmojisStream(sparkEmoji.emojiValueStream(sparkEmoji.dfStreamRaw), threshold.toInt, seconds.toInt)
+        sparkEmoji.popPeepsEmojisStream(sparkEmoji.rawDFtoEmojiDFStream(sparkEmoji.dfStreamRaw), threshold.toInt, seconds.toInt)
       }
 
         //Question 6
@@ -50,7 +46,7 @@ object Runner {
           twitterApi.sampleStreamToDir("tweet.fields=public_metrics,created_at,lang&user.fields=public_metrics&expansions=author_id",debug=false)
         }
         sparkEmoji.uploadJSON(path, multiline = false, stream = true)
-        sparkEmoji.topEmojiVariationStream(sparkEmoji.emojiValueStream(sparkEmoji.dfStreamRaw), emoji, seconds.toInt)
+        sparkEmoji.topEmojiVariationStream(sparkEmoji.rawDFtoEmojiDFStream(sparkEmoji.dfStreamRaw), emoji, seconds.toInt)
       }
 
       // Catch any other cases
