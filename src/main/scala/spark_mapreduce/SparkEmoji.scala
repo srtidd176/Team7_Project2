@@ -8,7 +8,7 @@ package spark_mapreduce
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql
 import org.apache.spark.sql.functions.{desc, explode, not}
-import org.apache.spark.sql.types.{ArrayType, IntegerType, StringType, StructField, StructType}
+import org.apache.spark.sql.types.{ArrayType, IntegerType, LongType, StringType, StructField, StructType}
 import org.apache.spark.sql.{DataFrame, Row, SparkSession, functions}
 
 import scala.collection.mutable.ListBuffer
@@ -235,33 +235,37 @@ class SparkEmoji(master: String) extends java.io.Serializable {
 
     }
     else{
-      rows = df.select("text").rdd
-      //,"tweet_id", "author_id", "time", "lang", "like_count", "quote_count", "reply_count", "retweet_count", "user_id", "name", "username", "followers_count", "following_count", "tweet_count", "listed_count").rdd //add required stream rows here
-      val rddList: RDD[Row] = rows.map(row => Row(breakUpEmojis(row.get(0).toString)))//,row.get(1),row.get(2),row.get(3),row.get(4),row.get(5),row.get(6),row.get(7),row.get(8),row.get(9),row.get(10),row.get(11),row.get(12),row.get(13),row.get(14),row.get(15)))
+      rows = df.select("text","tweet_id", "author_id", "time", "lang", "like_count", "quote_count",
+        "reply_count", "retweet_count", "user_id", "name", "username", "followers_count", "following_count",
+      "tweet_count", "listed_count").rdd
+      //author_id, followers_count, following_count, lang, like_count, listed_count, name, quote_count, reply_count, retweet_count, text, time, tweet_count, tweet_id, user_id, username
+      val rddList: RDD[Row] = rows.map(row => Row(breakUpEmojis(row.get(0).toString),row.get(1),row.get(2),row.get(3),
+        row.get(4),row.get(5),row.get(6),row.get(7),row.get(8),row.get(9),row.get(10),row.get(11),row.get(12),row.get(13),
+        row.get(14),row.get(15)))
       rddList.foreach(println(_))
       val schema = StructType(
         Seq(
-          StructField(name = "text", dataType = ArrayType(StringType, true), nullable = false)/*,
-          StructField(name = "tweet_id", dataType = IntegerType, nullable = false),
-          StructField(name = "author_id", dataType = IntegerType, nullable = false),
+          StructField(name = "text", dataType = ArrayType(StringType, true), nullable = false),
+          StructField(name = "tweet_id", dataType = StringType, nullable = false),
+          StructField(name = "author_id", dataType = StringType, nullable = false),
           StructField(name = "time", dataType = StringType, nullable = false),
           StructField(name = "lang", dataType = StringType, nullable = false),
-          StructField(name = "like_count", dataType = IntegerType, nullable = false),
-          StructField(name = "quote_count", dataType = IntegerType, nullable = false),
-          StructField(name = "reply_count", dataType = IntegerType, nullable = false),
-          StructField(name = "retweet_count", dataType = IntegerType, nullable = false),
-          StructField(name = "user_id", dataType = IntegerType, nullable = false),
+          StructField(name = "like_count", dataType = LongType, nullable = false),
+          StructField(name = "quote_count", dataType = LongType, nullable = false),
+          StructField(name = "reply_count", dataType = LongType, nullable = false),
+          StructField(name = "retweet_count", dataType = LongType, nullable = false),
+          StructField(name = "user_id", dataType = StringType, nullable = false),
           StructField(name = "name", dataType = StringType, nullable = false),
           StructField(name = "username", dataType = StringType, nullable = false),
-          StructField(name = "followers_count", dataType = IntegerType, nullable = false),
-          StructField(name = "following_count", dataType = IntegerType, nullable = false),
-          StructField(name = "tweet_count", dataType = IntegerType, nullable = false),
-          StructField(name = "listed_count", dataType = IntegerType, nullable = false)*/
+          StructField(name = "followers_count", dataType = LongType, nullable = false),
+          StructField(name = "following_count", dataType = LongType, nullable = false),
+          StructField(name = "tweet_count", dataType = LongType, nullable = false),
+          StructField(name = "listed_count", dataType = LongType, nullable = false)
         )
       )
       dataFrameEmoji = spark.createDataFrame(rddList, schema).withColumn("text", functions.explode($"text"))
+        .withColumn("text", functions.explode(functions.split($"text", "\\s")))
  }
-
     dataFrameEmoji
   }
 

@@ -13,7 +13,7 @@ object Runner {
         //TODO delete : Returns a DataFrame containing the emojis separated from historic Twitter data
       case Array(func, path) if(func == "historic-emojis") =>  {
         sparkEmoji.uploadJSON(path, multiline = false, stream = false)
-        sparkEmoji.emojiValue(sparkEmoji.dfRaw).show()
+        sparkEmoji.emojiValue(sparkEmoji.dfRaw).show(50)
       }
         //TODO delete : Returns a DataFrame containing the emojis separated from Twitter Stream data
       case Array(func, path, seconds) if(func == "stream-emojis") => {
