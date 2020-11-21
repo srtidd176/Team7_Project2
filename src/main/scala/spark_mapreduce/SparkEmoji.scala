@@ -68,64 +68,56 @@ class SparkEmoji(master: String) extends java.io.Serializable {
 
   }
 
-
-  /** TODO delete this since it is unnecessary
-   * Takes a input DataFrame with raw Twitter Tweet values from a GetManyTweets request result and
-   * produces a DataFrame containing rows with singular emojis from that data
-   * @param inputDF the input DataFrame with raw values
-   * @return DataFrame with only the emojis separated by spaces
+  /**
+   * Compares the top emojis of two different languages
+   * @param df the input raw data frame
+   * @param language1 the first language you are searching for emojis, will be ordered by this languages top emojis
+   * @param language2 the second language you are searching for emojis
    */
-
-
-  def emojiValue(inputDF: DataFrame): DataFrame = {
-      import spark.implicits._
-      val df = rawDFtoEmojiDF(inputDF)
-      df
-    }
-    /*
-    val emojiRegexLike = "\u00a9|\u00ae|[\u2000-\u3300]|[\ud83c\ud000-\ud83c\udfff]|[\ud83d\ud000-\ud83d\udfff]|[\ud83e\ud000-\ud83e\udfff]" //Identify "emoji-like" words
-      val emojiRegexSingle = "^\u00a9$|^\u00ae$|^[\u2000-\u3300]?[\uD83C\uDFFB-\uD83C\uDFFF]$|^[\ud83c\ud000-\ud83c\udfff]?[\uD83C\uDFFB-\uD83C\uDFFF]$|" +
-        "^[\ud83d\ud000-\ud83d\udfff]?[\uD83C\uDFFB-\uD83C\uDFFF]$|^[\ud83e\ud000-\ud83e\udfff]?[\uD83C\uDFFB-\uD83C\uDFFF]$" //Identify unique emojis
-    */
-
-  /** TODO delete this since it is unnecessary
-   * Takes a input DataFrame with raw Twitter Tweet values from a stream and produces a DataFrame
-   * containing rows with singular emojis from that data
-   * @param inputDF the input stream data file
-   * @return a DataFrame with all required fields for emojis
-   */
-  def emojiValueStream(inputDF: DataFrame): Boolean = {
-    val emojiDF = rawDFtoEmojiDFStream(dfStreamRaw)
-    emojiDF.select("id", "text").writeStream
-      .outputMode("append")
-      .format("console")
-      .start()
-      .awaitTermination(60000)
-  }/*
+  def langTopEmojisHist(df: DataFrame, language1: String, language2: String): Unit ={
     import spark.implicits._
-    val emojiRegexLike = "\u00a9|\u00ae|[\u2000-\u3300]|[\ud83c\ud000-\ud83c\udfff]|[\ud83d\ud000-\ud83d\udfff]|[\ud83e\ud000-\ud83e\udfff]" //Identify "emoji-like" words
-    val emojiRegexSingle = "^\u00a9$|^\u00ae$|^[\u2000-\u3300]?[\uD83C\uDFFB-\uD83C\uDFFF]$|^[\ud83c\ud000-\ud83c\udfff]?[\uD83C\uDFFB-\uD83C\uDFFF]$|" +
-      "^[\ud83d\ud000-\ud83d\udfff]?[\uD83C\uDFFB-\uD83C\uDFFF]$|^[\ud83e\ud000-\ud83e\udfff]?[\uD83C\uDFFB-\uD83C\uDFFF]$" //Identify unique emojis
+    val langEmojiDF = rawDFtoEmojiDF(df)
+    val lang1EmojisDF = langEmojiDF.select("lang","text")
+      .filter( $"lang" === language1)
+      .groupBy("text")
+      .count()
+      .withColumnRenamed("count", s"${language1} total")
+      .orderBy(desc(s"${language1} total"))
+    val lang2EmojisDF = langEmojiDF.select("lang","text")
+      .filter( $"lang" === language2)
+      .groupBy("text")
+      .count()
+      .withColumnRenamed("count", s"${language2} total")
+    val fullLangEmojisDF = lang1EmojisDF.join(lang2EmojisDF, lang1EmojisDF("text") === lang2EmojisDF("text"), "fullouter")
+      .orderBy(desc(s"${language1} total"))
+    fullLangEmojisDF.show()
+  }
 
-    //TODO Add all required columns in the select bellow
-    val dfEmojiSplit = inputDF.select("data.id", "includes.users.public_metrics.followers_count", "data.text")
-      .withColumn("text", functions.explode(functions.split($"text", "\\s"))) //split by spaces and explode
-      .filter($"text" rlike emojiRegexLike) // filter out everything that is not emoji-like
-
-    val condition = $"text" rlike emojiRegexSingle //filter out everything that is not a single emoji
-    val dfEmojiSingle = dfEmojiSplit.filter(condition) //single emojis
-    val dfEmojiGroups = dfEmojiSplit.filter(not(condition)) //concatenated emojis
-
-    dfEmojiSingle
-    //dfEmojiSingle
-    //dfEmojiGroups
-    //TODO Break up the emoji groups
-   // val emojiGroupsSplit = dfEmojiGroups
-    //  .withColumn("text", functions.explode(functions.split($"text", "")))
-      //.filter($"text" rlike "\\W")
-    //.filter(condition) //collect single emojis
-     //emojiGroupsSplit
-  }*/
+  /**
+   * Shows the top emojis used by most liked or retweeted tweets
+   * @param df the input raw data frame
+   * @param likes true for likes, false for retweets
+   */
+  def popTweetsEmojiHist(df: DataFrame, likes: Boolean): Unit = {
+    import spark.implicits._
+    val tweetEmojiDF = rawDFtoEmojiDF(df)
+    if(likes == true) {
+      val likeEmojiDF = tweetEmojiDF.select("text", "like_count")
+        .groupBy("text")
+        .avg("like_count")
+        .withColumnRenamed("avg(like_count)", "average_likes")
+        .orderBy(desc("average_likes"))
+      likeEmojiDF.show()
+    }
+    else {
+      val likeEmojiDF = tweetEmojiDF.select("text", "retweet_count")
+        .groupBy("text")
+        .avg("retweet_count")
+        .withColumnRenamed("avg(retweet_count)", "average_retweets")
+        .orderBy(desc("average_retweets"))
+      likeEmojiDF.show()
+    }
+  }
 
   /**
    * Shows the top emojis used by famous people
