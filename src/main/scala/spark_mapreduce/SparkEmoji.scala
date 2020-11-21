@@ -249,7 +249,9 @@ class SparkEmoji(master: String) extends java.io.Serializable {
     val emojiRegexStage2 = "([\ud83c\ud000-\ud83c\udfff]|[\ud83d\ud000-\ud83d\udfff]|[\ud83e\ud000-\ud83e\udfff])".r //second base emoji char
     val emojiRegexStage3 = "([\ud83d\uDC4B-\ud83d\udf82]\uD83C|[\ud83e\uD000-\ud83e\uDFFF]\uD83C)".r // skin tone identifier char
     val emojiRegexStage4 = "([\ud83d\uDC4B-\ud83d\udf82][\uD83C\uDFFB-\uD83C\uDFFF]|[\ud83e\uD000-\ud83e\uDFFF][\uD83C\uDFFB-\uD83C\uDFFF])".r // specific color identifier char
-    val letterRegex = "(\\w|\\s|[.,’'\\/#!+“<>”\"?$@%\\^&\\*;:{}=\\-_`~()])".r // ignore regex
+    val letterRegex = ("(\\w|\\s|\u0000|[\u0000-\u00a8]|[\u00aa-\u00ad]|[\u00af-\u1999]|[\u0621-\u064A]|[\u3040-ゟ]|" +
+      "[゠-㆟]|[\uFF00-｝]|[에━】   『    …    뮤이  　。   ️스”【、   ─“…」「]|[～-\uFFEF]|" +
+      "[一-龠]|[ぁ-ゔ]| [ァ-ヴー]|[々〆〤]|[.,’'\\/#?!$@%\\^&\\*;:{}=\\-_`~()])").r
     var oldPosEmoji = ""
     var newPosEmoji = ""
     var baseEmojiBackup = ""
