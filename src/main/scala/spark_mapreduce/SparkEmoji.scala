@@ -59,7 +59,6 @@ class SparkEmoji(master: String) extends java.io.Serializable {
 
         //inner joins the two df
         dfRaw = dfTweetFullFlatten.join(dfAuthFullFlatten, dfTweetFullFlatten("author_id") === dfAuthFullFlatten("user_id"))
-        dfRaw.show()
       }
 
     else{
@@ -128,7 +127,7 @@ class SparkEmoji(master: String) extends java.io.Serializable {
    */
   def popPeepsEmojisStream(df:DataFrame, threshold: Int, seconds: Int): Boolean ={
     import spark.implicits._
-    val popEmojisDF = df.select("followers_count","text")
+    val popEmojisDF = df.distinct().select("followers_count","text")
       .filter( $"followers_count"(0) > threshold)
       .groupBy("text")
       .count()
@@ -158,7 +157,7 @@ class SparkEmoji(master: String) extends java.io.Serializable {
     dark skin: \uD83C\uDFFF
     */
     import spark.implicits._
-    val emojiVariation = df.select("text")
+    val emojiVariation = df.distinct().select("text")
       .filter($"text" rlike baseEmoji)
       .groupBy("text")
       .count()
@@ -242,7 +241,7 @@ class SparkEmoji(master: String) extends java.io.Serializable {
     val emojiRegexStage3 = "([\ud83d\uDC4B-\ud83d\udf82]\uD83C|[\ud83e\uD000-\ud83e\uDFFF]\uD83C)".r // skin tone identifier char
     val emojiRegexStage4 = "([\ud83d\uDC4B-\ud83d\udf82][\uD83C\uDFFB-\uD83C\uDFFF]|[\ud83e\uD000-\ud83e\uDFFF][\uD83C\uDFFB-\uD83C\uDFFF])".r // specific color identifier char
     val letterRegex = ("(\\w|\\s|\u0000|[\u0000-\u00a8]|[\u00aa-\u00ad]|[\u00af-\u1999]|[\u0621-\u064A]|[\u3040-ゟ]|" +
-      "[゠-㆟]|[\uFF00-｝]|[에━】   『    …    뮤이  　。   ️스”【、   ─“…」「]|[～-\uFFEF]|" +
+      "[゠-㆟]|[\uFF00-｝]|[\uD83C\uDDF7에\uD83C\uDDF0━\uD83C\uDDEB】   『    …    뮤이  　。   ️스”【、   ─“…」「]|[～-\uFFEF]|" +
       "[一-龠]|[ぁ-ゔ]| [ァ-ヴー]|[々〆〤]|[.,’'\\/#?!$@%\\^&\\*;:{}=\\-_`~()])").r
     var oldPosEmoji = ""
     var newPosEmoji = ""
