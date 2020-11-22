@@ -13,7 +13,7 @@ object Runner {
 
       // Currently Helper to pull Recent Tweets by Time interval for Historical Records
       case Array(func, path) if (func== "weeklyHistorical") => {
-        twitterApi.recentSearchTimeInt(30, true)
+        twitterApi.recentSearchTimeInt(30, path, true)
 
       }
 
@@ -24,9 +24,9 @@ object Runner {
       }
 
       // Question 2
-      case Array(func, path) if (func == "hourly-pop-emoji") => {
+      case Array(func, path, opt) if (func == "popular-emoji-by-time") => {
         sparkEmoji.uploadJSON(path, false, false)
-        sparkEmoji.hourlyPopEmojis()
+        sparkEmoji.popEmojiByTime(opt)
       }
 
       //Question 3
@@ -69,7 +69,9 @@ object Runner {
   }
   def printMenu(): Unit ={
     println("________________________________________________USAGE_____________________________________________________________")
-    println("weeklyHistorical | pull down historical record sample of Recent Tweets")
+    println("weeklyHistorical <Dir path>| pull down historical record sample of recent tweets from present time to a week ago")
+    println("weekly-pop-emoji <JSON path> | the most popular emoji from the weeklyHistorical data")
+    println("popular-emoji-by-time <JSON path> <opt> | the most popular emojis from a set of time periods options: \"daily\" \"hourly\" \"dailyAndHourly\"")
     println("language-top-emojis <JSON path> <first language> <second language> <seconds> | top emojis in first language with how many are used in second language")
     println("popular-tweet-emojis <JSON path> <like boolean> | most liked or retweeted emojis")
     println("popular-people-emojis <JSON path> <followers minimum> <seconds> | most popular emojis among famous people")

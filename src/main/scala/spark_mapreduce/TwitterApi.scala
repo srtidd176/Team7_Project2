@@ -244,7 +244,7 @@ class TwitterApi (bearerToken: String)  {
    * ago and saves the results to a file in recentSearch. Returns a max of 100 Tweets per request.
    * @param interval timeinterval to divide the ZonedDateTimes from present to 7 days ago by.
    */
-  def recentSearchTimeInt(interval: Int, debug: Boolean = false): Unit = {
+  def recentSearchTimeInt(interval: Int, path:String = "recentSearch", debug: Boolean = false): Unit = {
     System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2")
     val searchQuery = "\uD83D\uDE00 OR \uD83D\uDE03 OR \uD83D\uDE04 OR \uD83D\uDE01 OR  \uD83D\uDE06 OR  \uD83D\uDE05 OR \uD83D\uDE02 OR" +
       " \uD83E\uDD23 OR ☺️ OR \uD83D\uDE0A OR \uD83D\uDE07 OR \uD83D\uDE42 OR \uD83D\uDE43 OR \uD83D\uDE09 OR \uD83D\uDE0C OR \uD83D\uDE0D OR \uD83E\uDD70 OR \uD83D\uDE18 OR \uD83D\uDE17 OR \uD83D\uDE19 OR \uD83D\uDE1A OR \uD83D\uDE0B OR \uD83D\uDE1B OR \uD83D\uDE1D OR \uD83D\uDE1C OR \uD83E\uDD2A OR \uD83E\uDD28 OR \uD83E\uDDD0 OR \uD83E\uDD13 OR \uD83D\uDE0E OR \uD83E\uDD29 OR \uD83E\uDD73 OR \uD83D\uDE0F OR \uD83D\uDE12 OR \uD83D\uDE1E OR \uD83D\uDE14 OR \uD83D\uDE1F OR \uD83D\uDE15 OR \uD83D\uDE41 OR ☹️ OR \uD83D\uDE23 OR \uD83D\uDE16 OR \uD83D\uDE2B OR \uD83D\uDE29 OR \uD83E\uDD7A OR \uD83D\uDE22 OR \uD83D\uDE2D OR \uD83D\uDE24 OR \uD83D\uDE20 OR \uD83D\uDE21 OR \uD83E\uDD2C OR \uD83E\uDD2F OR \uD83D\uDE33 OR \uD83E\uDD75 OR \uD83E\uDD76 OR \uD83D\uDE31 OR \uD83D\uDE28 OR \uD83D\uDE30 OR \uD83D\uDE25 OR \uD83D\uDE13 OR \uD83E\uDD17 OR \uD83E\uDD14 OR \uD83E\uDD2D OR \uD83E\uDD2B OR \uD83E\uDD25 OR \uD83D\uDE36 OR \uD83D\uDE10 OR \uD83D\uDE11 OR \uD83D\uDE2C OR \uD83D\uDE44 OR \uD83D\uDE2F OR \uD83D\uDE26 OR \uD83D\uDE27 OR  \uD83D\uDE2E OR \uD83D\uDE32 OR \uD83E\uDD71 OR \uD83D\uDE34 OR \uD83E\uDD24 OR \uD83D\uDE2A OR \uD83D\uDE35 OR \uD83E\uDD10 OR \uD83E\uDD74 OR \uD83E\uDD22 OR \uD83E\uDD2E OR \uD83E\uDD27"
@@ -253,7 +253,7 @@ class TwitterApi (bearerToken: String)  {
 
     for( dateTime <- dateVectors) {
       if (debug) println("Value of dateTime: " + dateTime);
-      recentSearch(searchQuery, s"end_time=${dateTime.toString}&" + queryFields, debug=debug)
+      recentSearch(searchQuery, s"end_time=${dateTime.toString}&" + queryFields, path , debug=debug)
     }
   }
 
