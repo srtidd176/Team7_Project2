@@ -176,6 +176,7 @@ class SparkEmoji(master: String) extends java.io.Serializable {
           .show(168,false)
 
       }
+      case _ => println("Please choose an option from: \"daily\", \"hourly\", or \"dailyAndHourly\"")
     }
 
   }
