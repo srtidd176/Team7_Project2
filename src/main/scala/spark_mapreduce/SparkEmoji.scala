@@ -7,10 +7,11 @@ package spark_mapreduce
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql
-import org.apache.spark.sql.functions.{desc, explode, not, udf}
+import org.apache.spark.sql.functions.{desc, explode, not, regexp_extract, udf}
 import org.apache.spark.sql.types.{ArrayType, IntegerType, LongType, StringType, StructField, StructType}
 import org.apache.spark.sql.{DataFrame, Row, SparkSession, functions}
 
+import scala.util.matching._
 import scala.collection.mutable.ListBuffer
 
 
@@ -39,11 +40,13 @@ class SparkEmoji(master: String) extends java.io.Serializable {
     import spark.implicits._
     val df = spark.read.option("multiline", multiline).json(path)
 
+    val retweetPattern = "RT"
+
       if(!stream) {
         //getting the tweet DF
         val splitDfTweet = df.select("data").withColumn("data", functions.explode($"data"))
         val dfTweet = splitDfTweet.select("data.*")
-        val dfTweetFlatten = dfTweet.toDF("author_id", "time", "id", "lang", "public_metrics", "text")
+        val dfTweetFlatten = dfTweet.toDF("author_id", "time", "id", "lang", "public_metrics", "text", "witheld")
         val dfTweetFull = dfTweetFlatten.select("id", "author_id", "time", "lang", "public_metrics.*", "text")
         val dfTweetFullFlatten = dfTweetFull.toDF("tweet_id", "author_id", "time", "lang", "like_count", "quote_count", "reply_count", "retweet_count", "text")
         //dfTweetFullFlatten.show()
@@ -58,7 +61,12 @@ class SparkEmoji(master: String) extends java.io.Serializable {
         //dfAuthFullFlatten.show()
 
         //inner joins the two df
-        dfRaw = dfTweetFullFlatten.join(dfAuthFullFlatten, dfTweetFullFlatten("author_id") === dfAuthFullFlatten("user_id"))
+        val dfRawWRT = dfTweetFullFlatten.join(dfAuthFullFlatten, dfTweetFullFlatten("author_id") === dfAuthFullFlatten("user_id"))
+          .withColumn("retweet", $"text".startsWith(retweetPattern))
+        //filters out all retweets
+        dfRaw = dfRawWRT.select("tweet_id", "author_id", "time", "lang", "like_count", "quote_count", "reply_count", "retweet_count", "text", "user_id", "name", "username", "followers_count", "following_count", "tweet_count", "listed_count", "retweet")
+          .filter($"retweet" === "false")
+
       }
 
     else{
@@ -88,7 +96,7 @@ class SparkEmoji(master: String) extends java.io.Serializable {
       .count()
       .withColumnRenamed("count", s"${language2} total")
     val fullLangEmojisDF = lang1EmojisDF.join(lang2EmojisDF, lang1EmojisDF("text") === lang2EmojisDF("text"), "fullouter")
-      .orderBy(desc(s"${language1} total"))
+      .orderBy(desc(s"${language1} total") , desc(s"${language2} total"))
     fullLangEmojisDF.show()
   }
 
@@ -101,20 +109,33 @@ class SparkEmoji(master: String) extends java.io.Serializable {
     import spark.implicits._
     val tweetEmojiDF = rawDFtoEmojiDF(df)
     if(likes == true) {
+      val moreLikeEmojiDF = tweetEmojiDF.select("text")
+        .groupBy("text")
+        .count()
       val likeEmojiDF = tweetEmojiDF.select("text", "like_count")
         .groupBy("text")
         .avg("like_count")
         .withColumnRenamed("avg(like_count)", "average_likes")
+      val fullEmojiDF = likeEmojiDF.join(moreLikeEmojiDF, likeEmojiDF("text") === moreLikeEmojiDF("text"))
+        .filter($"count" > 10)
+        .select(likeEmojiDF("text"), $"average_likes")
         .orderBy(desc("average_likes"))
-      likeEmojiDF.show()
+      fullEmojiDF.show()
     }
     else {
-      val likeEmojiDF = tweetEmojiDF.select("text", "retweet_count")
+      val moreRetweetEmojiDF = tweetEmojiDF.select("text")
+        .groupBy("text")
+        .count()
+      val retweetEmojiDF = tweetEmojiDF.select("text", "retweet_count")
         .groupBy("text")
         .avg("retweet_count")
         .withColumnRenamed("avg(retweet_count)", "average_retweets")
         .orderBy(desc("average_retweets"))
-      likeEmojiDF.show()
+      val fullEmojiDF = retweetEmojiDF.join(moreRetweetEmojiDF, retweetEmojiDF("text") === moreRetweetEmojiDF("text"))
+        .filter($"count" > 10)
+        .select(retweetEmojiDF("text"), $"average_retweets")
+        .orderBy(desc("average_retweets"))
+      fullEmojiDF.show()
     }
   }
 
@@ -203,7 +224,7 @@ class SparkEmoji(master: String) extends java.io.Serializable {
       val rddList: RDD[Row] = rows.map(row => Row(breakUpEmojis(row.get(0).toString),row.get(1),row.get(2),row.get(3),
         row.get(4),row.get(5),row.get(6),row.get(7),row.get(8),row.get(9),row.get(10),row.get(11),row.get(12),row.get(13),
         row.get(14),row.get(15)))
-      rddList.foreach(println(_))
+      //rddList.foreach(println(_))
       val schema = StructType(
         Seq(
           StructField(name = "text", dataType = ArrayType(StringType, true), nullable = false),
@@ -242,7 +263,7 @@ class SparkEmoji(master: String) extends java.io.Serializable {
     val emojiRegexStage4 = "([\ud83d\uDC4B-\ud83d\udf82][\uD83C\uDFFB-\uD83C\uDFFF]|[\ud83e\uD000-\ud83e\uDFFF][\uD83C\uDFFB-\uD83C\uDFFF])".r // specific color identifier char
     val letterRegex = ("(\\w|\\s|\u0000|[\u0000-\u00a8]|[\u00aa-\u00ad]|[\u00af-\u1999]|[\u0621-\u064A]|[\u3040-ゟ]|" +
       "[゠-㆟]|[\uFF00-｝]|[\uD83C\uDDF7에\uD83C\uDDF0━\uD83C\uDDEB】   『    …    뮤이  　。   ️스”【、   ─“…」「]|[～-\uFFEF]|" +
-      "[一-龠]|[ぁ-ゔ]| [ァ-ヴー]|[々〆〤]|[.,’'\\/#?!$@%\\^&\\*;:{}=\\-_`~()])").r
+      "[一-龠]|[ぁ-ゔ]| [ァ-ヴー]|[々〆〤]|[가-힟]|[.,’'\\/#?!$@%\\^&\\*;:{}=\\-_`~()])").r
     var oldPosEmoji = ""
     var newPosEmoji = ""
     var baseEmojiBackup = ""
