@@ -7,7 +7,7 @@ package spark_mapreduce
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql
-import org.apache.spark.sql.functions.{desc, explode, not, regexp_extract, udf}
+import org.apache.spark.sql.functions.{dayofweek, days, desc, explode, hour, not, to_timestamp, to_utc_timestamp, udf, when, regexp_extract}
 import org.apache.spark.sql.types.{ArrayType, IntegerType, LongType, StringType, StructField, StructType}
 import org.apache.spark.sql.{DataFrame, Row, SparkSession, functions}
 
@@ -46,10 +46,10 @@ class SparkEmoji(master: String) extends java.io.Serializable {
         //getting the tweet DF
         val splitDfTweet = df.select("data").withColumn("data", functions.explode($"data"))
         val dfTweet = splitDfTweet.select("data.*")
-        val dfTweetFlatten = dfTweet.toDF("author_id", "time", "id", "lang", "public_metrics", "text", "witheld")
+        val dfTweetFlatten = dfTweet.toDF("author_id", "time", "id", "lang", "public_metrics", "text", "withheld")
         val dfTweetFull = dfTweetFlatten.select("id", "author_id", "time", "lang", "public_metrics.*", "text")
         val dfTweetFullFlatten = dfTweetFull.toDF("tweet_id", "author_id", "time", "lang", "like_count", "quote_count", "reply_count", "retweet_count", "text")
-        //dfTweetFullFlatten.show()
+//        dfTweetFullFlatten.show()
 
         //getting the author DF
         val splitDfAuth = df.select("includes.*")
@@ -58,7 +58,7 @@ class SparkEmoji(master: String) extends java.io.Serializable {
         val dfAuthFlatten = dfAuth.toDF("id", "name", "username", "public_metrics")
         val dfAuthFull = dfAuthFlatten.select("id", "name", "username", "public_metrics.followers_count", "public_metrics.following_count", "public_metrics.tweet_count", "public_metrics.listed_count")
         val dfAuthFullFlatten = dfAuthFull.toDF("user_id", "name", "username", "followers_count", "following_count", "tweet_count", "listed_count")
-        //dfAuthFullFlatten.show()
+//        dfAuthFullFlatten.show()
 
         //inner joins the two df
         val dfRawWRT = dfTweetFullFlatten.join(dfAuthFullFlatten, dfTweetFullFlatten("author_id") === dfAuthFullFlatten("user_id"))
@@ -71,6 +71,111 @@ class SparkEmoji(master: String) extends java.io.Serializable {
 
     else{
         dfStreamRaw =  spark.readStream.schema(df.schema).json(path)
+    }
+
+  }
+
+  /**
+   * topEmojisOfWeek - outputs the top emojis of the week.
+   */
+  def topEmojisOfWeek() ={
+    rawDFtoEmojiDF(dfRaw)
+      .select("text")
+      .groupBy("text")
+      .count()
+      .withColumnRenamed("text", "emoji")
+      .withColumnRenamed("count", "usage")
+      .orderBy(desc("count"))
+      .show()
+  }
+
+  /**
+   * popEmojiByTime - outputs to console returns most popular emojies by daily, hourly, dailyAndHourly
+   * @param opt : String - daily - top emojis of a day
+   *                       hourly - top emojis by hour across days
+   *                       dailyAndHourly - top emojis by each hour of a day
+   */
+  def popEmojiByTime(opt:String ="dailyAndHourly"): Unit = {
+    import spark.implicits._
+
+    val dateEmoji = rawDFtoEmojiDF(dfRaw)
+      .withColumn("time", to_utc_timestamp( $"time", "UTC" ) )
+      .withColumn("dayOfWeek", dayofweek($"time"))
+      .withColumn("hour", hour($"time"))
+      .select("text", "time", "dayOfWeek", "hour")
+
+    val countedEmoji = dateEmoji
+      .groupBy("dayOfWeek", "hour", "text")
+      .count()
+
+    opt match {
+      case "daily" => {
+        val dailyEmojis = countedEmoji
+          .groupBy("dayOfWeek" , "text")
+          .sum("count")
+
+        dailyEmojis.as("max")
+          .groupBy("dayOfWeek")
+          .max("sum(count)").as("sum")
+          .join(dailyEmojis, dailyEmojis("dayOfWeek") === $"sum.dayOfWeek" && dailyEmojis("sum(count)") === $"max(sum(count))")
+          .select( dailyEmojis("dayOfWeek"), $"text".as("Emoji"), $"sum(count)".as("Popularity"))
+          .orderBy($"dayOfWeek")
+          .withColumn("dayOfWeek", when(dailyEmojis("dayOfWeek") === 1, "Monday")
+          .when(dailyEmojis("dayOfWeek") === 2, "Tuesday")
+            .when(dailyEmojis("dayOfWeek") === 3, "Wednesday")
+            .when(dailyEmojis("dayOfWeek") === 4, "Thursday")
+            .when(dailyEmojis("dayOfWeek") === 5, "Friday")
+            .when(dailyEmojis("dayOfWeek") === 6, "Saturday")
+            .when(dailyEmojis("dayOfWeek") === 7, "Sunday")
+          .otherwise("OppsieThatIsNotDay"))
+          .show(false)
+      }
+      case "hourly" => {
+        val hourlyEmojis = countedEmoji
+          .groupBy("hour" , "text")
+          .sum("count")
+
+        hourlyEmojis.as("hour")
+          .groupBy("hour")
+          .max("sum(count)")
+          //      .orderBy($"dayOfWeek", $"hour", desc("max(count)") )
+          .join(
+            hourlyEmojis,
+            hourlyEmojis("sum(count)") === $"max(sum(count))"
+              && hourlyEmojis("hour") === $"hour.hour")
+          .select( $"hour.hour", $"text", $"sum(count)")
+          .withColumnRenamed("text", "MostPopEmoji")
+          .withColumnRenamed("sum(count)","Occurance")
+          .orderBy("hour")
+          .show(24,false)
+
+    }
+      case "dailyAndHourly" => {
+        val dailyEmojis = countedEmoji
+          .groupBy("dayOfWeek" , "hour", "text")
+          .sum("count").withColumnRenamed("sum(count)", "count")
+
+        dailyEmojis.as("dayAndHour")
+          .groupBy("dayOfWeek","hour")
+          .max("count")
+          //      .orderBy($"dayOfWeek", $"hour", desc("max(count)") )
+          .join(dailyEmojis,
+            dailyEmojis("dayOfWeek") === $"dayAndHour.dayOfWeek"
+              && dailyEmojis("count") === $"max(count)"
+              && dailyEmojis("hour") === $"dayAndHour.hour")
+          .select( $"dayAndHour.dayOfWeek", $"dayAndHour.hour", $"text", $"count")
+          .orderBy("dayOfWeek", "hour")
+          .withColumn("dayOfWeek", when(dailyEmojis("dayOfWeek") === 1, "Monday")
+            .when(dailyEmojis("dayOfWeek") === 2, "Tuesday")
+            .when(dailyEmojis("dayOfWeek") === 3, "Wednesday")
+            .when(dailyEmojis("dayOfWeek") === 4, "Thursday")
+            .when(dailyEmojis("dayOfWeek") === 5, "Friday")
+            .when(dailyEmojis("dayOfWeek") === 6, "Saturday")
+            .when(dailyEmojis("dayOfWeek") === 7, "Sunday")
+            .otherwise("OppsieThatIsNotDay"))
+          .show(168,false)
+
+      }
     }
 
   }
