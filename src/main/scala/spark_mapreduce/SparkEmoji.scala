@@ -7,7 +7,7 @@ package spark_mapreduce
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql
-import org.apache.spark.sql.functions.{desc, explode, not, udf}
+import org.apache.spark.sql.functions.{dayofweek, days, desc, explode, hour, not, to_timestamp, to_utc_timestamp, udf}
 import org.apache.spark.sql.types.{ArrayType, IntegerType, LongType, StringType, StructField, StructType}
 import org.apache.spark.sql.{DataFrame, Row, SparkSession, functions}
 
@@ -64,6 +64,76 @@ class SparkEmoji(master: String) extends java.io.Serializable {
     else{
         dfStreamRaw =  spark.readStream.schema(df.schema).json(path)
     }
+
+  }
+
+
+  def topEmojisOfWeek() ={
+    rawDFtoEmojiDF(dfRaw)
+      .select("text")
+      .groupBy("text")
+      .count()
+      .withColumnRenamed("text", "emoji")
+      .orderBy(desc("count"))
+      .show()
+  }
+
+  def hourlyPopEmojis(): Unit = {
+    import spark.implicits._
+
+    val dateEmoji = rawDFtoEmojiDF(dfRaw)
+      .withColumn("time", to_utc_timestamp( $"time", "UTC" ) )
+      .withColumn("dayOfWeek", dayofweek($"time"))
+      .withColumn("hour", hour($"time"))
+      .select("text", "time", "dayOfWeek", "hour")
+
+    val countedEmoji = dateEmoji
+      .groupBy("dayOfWeek", "hour", "text")
+      .count()
+
+    val dailyEmojis = countedEmoji
+      .groupBy("dayOfWeek" , "text")
+      .sum("count")
+
+    val hourlyEmojis = countedEmoji
+      .groupBy("hour" , "text")
+      .sum("count")
+
+//    dailyEmojis.as("max")
+//      .groupBy("dayOfWeek")
+//      .max("sum(count)").as("sum")
+//      .join(dailyEmojis, dailyEmojis("dayOfWeek") === $"sum.dayOfWeek" && dailyEmojis("sum(count)") === $"max(sum(count))")
+//      .select( dailyEmojis("dayOfWeek"), $"text".as("Emoji"), $"sum(count)".as("Popularity"))
+//      .orderBy($"dayOfWeek")
+//      .show(false)
+//
+//    dailyEmojis.show()
+
+
+    hourlyEmojis.as("hour")
+      .groupBy("hour")
+      .max("sum(count)")
+      //      .orderBy($"dayOfWeek", $"hour", desc("max(count)") )
+      .join(hourlyEmojis,
+        hourlyEmojis("sum(count)") === $"max(sum(count))"
+          && hourlyEmojis("hour") === $"hour.hour")
+      .select( $"hour.hour", $"text", $"sum(count)")
+      .orderBy("hour")
+      .show(100,false)
+
+
+//    dailyEmojis.as("dayAndHour")
+//      .groupBy("dayOfWeek","hour")
+//      .max("count")
+////      .orderBy($"dayOfWeek", $"hour", desc("max(count)") )
+//      .join(dailyEmojis,
+//        dailyEmojis("dayOfWeek") === $"dayAndHour.dayOfWeek"
+//          && dailyEmojis("count") === $"max(count)"
+//          && dailyEmojis("hour") === $"dayAndHour.hour")
+//      .select( $"dayAndHour.dayOfWeek", $"dayAndHour.hour", $"text", $"count")
+//      .orderBy("dayOfWeek", "hour")
+//      .show(100,false)
+
 
   }
 
@@ -203,7 +273,7 @@ class SparkEmoji(master: String) extends java.io.Serializable {
       val rddList: RDD[Row] = rows.map(row => Row(breakUpEmojis(row.get(0).toString),row.get(1),row.get(2),row.get(3),
         row.get(4),row.get(5),row.get(6),row.get(7),row.get(8),row.get(9),row.get(10),row.get(11),row.get(12),row.get(13),
         row.get(14),row.get(15)))
-      rddList.foreach(println(_))
+//      rddList.foreach(println(_))
       val schema = StructType(
         Seq(
           StructField(name = "text", dataType = ArrayType(StringType, true), nullable = false),

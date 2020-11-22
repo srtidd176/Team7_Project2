@@ -17,6 +17,18 @@ object Runner {
 
       }
 
+        // Question 1
+      case Array(func, path) if (func == "weekly-pop-emoji") => {
+        sparkEmoji.uploadJSON(path, false, false)
+        sparkEmoji.topEmojisOfWeek()
+      }
+
+      // Question 2
+      case Array(func, path) if (func == "hourly-pop-emoji") => {
+        sparkEmoji.uploadJSON(path, false, false)
+        sparkEmoji.hourlyPopEmojis()
+      }
+
       //Question 3
       case Array(func, path, lang1, lang2) if(func == "language-top-emojis") =>{
         sparkEmoji.uploadJSON(path, false, false)
