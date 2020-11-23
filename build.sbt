@@ -11,3 +11,8 @@ libraryDependencies += "org.apache.bahir" %% "spark-streaming-twitter" % "2.4.0"
 libraryDependencies += "org.apache.httpcomponents" % "httpclient" % "4.5.12"
 // https://mvnrepository.com/artifact/commons-io/commons-io
 libraryDependencies += "commons-io" % "commons-io" % "2.8.0"
+
+assemblyMergeStrategy in assembly := {
+  case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+  case x => MergeStrategy.first
+}
