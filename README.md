@@ -3,6 +3,7 @@ Revature Team 7 Project 2
 
 ## Execution
 You must pass in your Twitter API bearer token as an environemnt variable like so:
+
 TWITTER_BEARER_TOKEN=<bearer_token> java -jar ../Twitter-Emoji-Analysis-assembly-0.1.jar <function> <param1> <param2> ...
 
 ## Twitter Emoji Analysis
