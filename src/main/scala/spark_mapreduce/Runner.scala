@@ -44,7 +44,7 @@ object Runner {
         //Question 5
       case Array(func, path, threshold, seconds) if(func == "popular-people-emojis") =>{
         Future {
-          twitterApi.sampleStreamToDir("tweet.fields=public_metrics,created_at,lang&user.fields=public_metrics&expansions=author_id",debug=false)
+          twitterApi.sampleStreamToDir("tweet.fields=public_metrics,created_at,lang&user.fields=public_metrics&expansions=author_id", dirname = path, debug=false)
         }
         sparkEmoji.uploadJSON(path, multiline = false, stream = true)
         sparkEmoji.popPeepsEmojisStream(sparkEmoji.rawDFtoEmojiDFStream(sparkEmoji.dfStreamRaw), threshold.toInt, seconds.toInt)
@@ -53,7 +53,7 @@ object Runner {
         //Question 6
       case Array(func, path, emoji, seconds) if(func == "popular-emoji-variant") =>{
         Future {
-          twitterApi.sampleStreamToDir("tweet.fields=public_metrics,created_at,lang&user.fields=public_metrics&expansions=author_id",debug=false)
+          twitterApi.sampleStreamToDir("tweet.fields=public_metrics,created_at,lang&user.fields=public_metrics&expansions=author_id", dirname = path, debug=false)
         }
         sparkEmoji.uploadJSON(path, multiline = false, stream = true)
         sparkEmoji.topEmojiVariationStream(sparkEmoji.rawDFtoEmojiDFStream(sparkEmoji.dfStreamRaw), emoji, seconds.toInt)
@@ -74,8 +74,8 @@ object Runner {
     println("popular-emoji-by-time <JSON path> <opt> | the most popular emojis from a set of time periods options: \"daily\" \"hourly\" \"dailyAndHourly\"")
     println("language-top-emojis <JSON path> <first language> <second language> <seconds> | top emojis in first language with how many are used in second language")
     println("popular-tweet-emojis <JSON path> <like boolean> | most liked or retweeted emojis")
-    println("popular-people-emojis <JSON path> <followers minimum> <seconds> | most popular emojis among famous people")
-    println("popular-emoji-variant <JSON path> <base emoji encoding> <seconds> | most popular emojis variation of given base emoji")
+    println("popular-people-emojis <JSON Stream path> <followers minimum> <seconds> | most popular emojis among famous people")
+    println("popular-emoji-variant <JSON Stream path> <\"base emoji\"> <seconds> | most popular emojis variation of given base emoji")
   }
 
 }
