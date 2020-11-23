@@ -1,6 +1,10 @@
 # Team7_Project2 Twitter Emoji Analysis
 Revature Team 7 Project 2 
 
+## Execution
+You must pass in your Twitter API bearer token as an environemnt variable like so:
+TWITTER_BEARER_TOKEN=<bearer_token> java -jar ../Twitter-Emoji-Analysis-assembly-0.1.jar <function> <param1> <param2> ...
+
 ## Twitter Emoji Analysis
 1. How does the most popular emoji change over a week(en language)? H
 2. How does the most popular emoji change throughout the hours in a day(en language)? H
